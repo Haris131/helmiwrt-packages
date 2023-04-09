@@ -62,7 +62,6 @@ git clone --depth=1 https://github.com/4IceG/luci-app-atinout-mod
 
 # HelmiWrt packages
 git clone --depth=1 https://github.com/Haris131/helmiwrt-packages
-rm -rf helmiwrt-packages/luci-app-v2raya
 
 # telegrambot
 svn co https://github.com/helmiau/helmiwrt-adds/trunk/packages/net/telegrambot helmiwrt-adds/telegrambot
