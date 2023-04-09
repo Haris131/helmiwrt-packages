@@ -54,7 +54,6 @@ define Package/$(PKG_NAME)/postinst
 	chmod -R 755 /www/libernet/*
 	chmod -R 755 /root/libernet/*
 	chmod -R 755 /root/libernet/bin/*
-	sed -i '3 i /usr/sbin/openvpn --mktun --dev tun1' /etc/rc.local
 	# Autofix download index.php, index.html
 	if ! grep -q ".php=/usr/bin/php-cgi" /etc/config/uhttpd; then
 	  echo -e "Enabling uhttp php execution"
