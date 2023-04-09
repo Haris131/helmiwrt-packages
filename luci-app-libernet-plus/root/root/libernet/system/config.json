@@ -2,7 +2,7 @@
     "tunnel": {
         "autostart": false,
         "dns_resolver": false,
-        "ping_loop": true,
+        "ping_loop": false,
         "auto_recon": true,
         "mode": 0,
         "profile": {
@@ -12,7 +12,8 @@
             "trojan": "",
             "shadowsocks": "",
             "openvpn": "",
-            "ssh_ws_cdn": ""
+            "ssh_ws_cdn": "",
+            "ssh_slowdns": ""
         }
     },
     "server": "",
@@ -36,8 +37,6 @@
         }
     },
     "system": {
-        "username": "admin",
-        "password": "libernet",
-        "memory_cleaner": true
+        "memory_cleaner": false
     }
 }

@@ -39,8 +39,13 @@ function check_connection() {
       # write not connectivity to service log
       "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Socks connection unavailable</span>"
       echo -e "Socks connection unavailable!"
+      if [ "${TUNNEL_MODE}" = "0" ] || [ "${TUNNEL_MODE}" = "2" ] || [ "${TUNNEL_MODE}" = "6" ] || [ "${TUNNEL_MODE}" = "7" ]; then
+        if [ ! -f $(grep Permission ${LIBERNET_DIR}/log/screenlog.0 2>/dev/null|awk "NR==1"|awk '{print $4}') ]; then
+          "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Username/Password Salah/Kadaluarsa.</span>"
+        fi
+      fi
       # cancel Libernet service
-      restart_services
+      cancel_services
       exit 1
     fi
   done
@@ -150,7 +155,7 @@ function openvpn_service() {
       "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">OpenVPN connection unavailable</span>"
       echo -e "OpenVPN connection unavailable!"
       # cancel Libernet service
-      restart_services
+      cancel_services
       exit 1
     fi
   done
@@ -158,6 +163,12 @@ function openvpn_service() {
 
 function ssh_ws_cdn_service() {
   "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -r
+  check_connection
+  run_other_services
+}
+
+function ssh_slowdns_service() {
+  "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -r
   check_connection
   run_other_services
 }
@@ -192,6 +203,9 @@ function start_services() {
       ;;
     "6")
       ssh_ws_cdn_service
+      ;;
+    "7")
+      ssh_slowdns_service
       ;;
   esac
   # write service status: connected
@@ -228,6 +242,9 @@ function stop_services() {
     "6")
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -s
       ;;
+    "7")
+      "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -s
+      ;;
   esac
   if [[ "${1}" != '-c' ]]; then
     # kill tun2socks if not openvpn
@@ -263,12 +280,6 @@ function stop_services() {
 function cancel_services() {
   stop_services -c
   killall service.sh
-}
-
-function restart_services() {
-  stop_services -c
-  sleep 10
-  start_services
 }
 
 function auto_start() {
@@ -323,6 +334,9 @@ case "${1}" in
   -swc)
     ssh_ws_cdn_service
     ;;
+  -slo)
+    ssh_slowdns_service
+    ;;
   -sl)
     start_services
     ;;
@@ -331,9 +345,6 @@ case "${1}" in
     ;;
   -cl)
     cancel_services
-    ;;
-  -rl)
-    restart_services
     ;;
   -ea)
     enable_auto_start

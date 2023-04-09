@@ -261,6 +261,23 @@ const app = new Vue({
                                 }
                             }
                         },
+                        {
+                            value: 7,
+                            name: "SSH-SlowDNS",
+                            profile: {
+                                ip: "",
+                                host: "",
+                                username: "",
+                                password: "",
+                                dns: "",
+                                ns: "",
+                                pubkey: "",
+                                udpgw: {
+                                    ip: "127.0.0.1",
+                                    port: null
+                                }
+                            }
+                        },
                     ]
                 },
                 system: {}
@@ -313,6 +330,9 @@ const app = new Vue({
                 case 6:
                     action = "get_sshwscdn_configs"
                     break
+                case 7:
+                    action = "get_sshslowdns_configs"
+                    break
             }
             axios.post('api.php', {
                 action: action
@@ -350,6 +370,9 @@ const app = new Vue({
                         break
                     case 6:
                         this.getSshWsCdnConfig()
+                        break
+                    case 7:
+                        this.getSshSlowdnsConfig()
                         break
                 }
                 // resolve server host
@@ -562,6 +585,17 @@ const app = new Vue({
                 temp.modes[6].profile = res.data.data
             })
         },
+        getSshSlowdnsConfig() {
+            axios.post('api.php', {
+                action: "get_sshslowdns_config",
+                profile: this.config.profile
+            }).then((res) => {
+                const temp = this.config.temp
+                temp.mode = 7
+                temp.profile = this.config.profile
+                temp.modes[7].profile = res.data.data
+            })
+        },
         getSystemConfig() {
             return new Promise((resolve) => {
                 axios.post('api.php', {
@@ -603,6 +637,10 @@ const app = new Vue({
                 case 6:
                     config = this.config.temp.modes[6].profile
                     title = "SSH-WS-CDN config has been saved"
+                    break
+                case 7:
+                    config = this.config.temp.modes[7].profile
+                    title = "SSH-SlowDNS config has been saved"
                     break
             }
             axios.post('api.php', {
@@ -696,6 +734,7 @@ const app = new Vue({
         },
         resolveServerHost: _.debounce(function () {
             switch (this.config.temp.mode) {
+            	// ssh
                 case 0:
                     axios.post('api.php', {
                         action: 'resolve_host',
@@ -754,6 +793,16 @@ const app = new Vue({
                     }).then((res) => {
                         this.config.temp.modes[6].profile.http.cdn.ip = res.data.data[0]
                     })
+                   break
+                 // ssh-slowdns
+                case 7:
+                    axios.post('api.php', {
+                        action: 'resolve_host',
+                        host: this.config.temp.modes[7].profile.host
+                    }).then((res) => {
+                        this.config.temp.modes[7].profile.ip = res.data.data[0]
+                    })
+                    break
             }
         }, 500)
     },

@@ -23,23 +23,26 @@ DYNAMIC_PORT="$(grep 'port":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g;
 ENABLE_HTTP="$(grep 'enable_http":' ${SSH_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
 
 function run() {
+  cd "${LIBERNET_DIR}/log"
+  echo "" > screenlog.0
   # write to service log
   "${LIBERNET_DIR}/bin/log.sh" -w "Config: ${SSH_PROFILE}, Mode: ${SERVICE_NAME}"
   if [[ "${ENABLE_HTTP}" == 'true' ]]; then
     "${LIBERNET_DIR}/bin/http.sh" -r \
       && "${LIBERNET_DIR}/bin/log.sh" -w "Starting ${SERVICE_NAME} service" \
       && echo -e "Starting ${SERVICE_NAME} service ..." \
-      && screen -AmdS ssh-connector "${LIBERNET_DIR}/bin/ssh-loop.sh" -e "${SSH_USER}" "${SSH_PASS}" "${SSH_HOST}" "${SSH_PORT}" "${DYNAMIC_PORT}" "${PROXY_IP}" "${PROXY_PORT}" \
+      && screen -L -AmdS ssh-connector "${LIBERNET_DIR}/bin/ssh-loop.sh" -e "${SSH_USER}" "${SSH_PASS}" "${SSH_HOST}" "${SSH_PORT}" "${DYNAMIC_PORT}" "${PROXY_IP}" "${PROXY_PORT}" \
       && echo -e "${SERVICE_NAME} service started!"
   else
     # write to service log
     "${LIBERNET_DIR}/bin/log.sh" -w "Starting ${SERVICE_NAME} service"
     echo -e "Starting ${SERVICE_NAME} service ..."
-    screen -AmdS ssh-connector "${LIBERNET_DIR}/bin/ssh-loop.sh" -d "${SSH_USER}" "${SSH_PASS}" "${SSH_HOST}" "${SSH_PORT}" "${DYNAMIC_PORT}"
+    screen -L -AmdS ssh-connector "${LIBERNET_DIR}/bin/ssh-loop.sh" -d "${SSH_USER}" "${SSH_PASS}" "${SSH_HOST}" "${SSH_PORT}" "${DYNAMIC_PORT}"
   fi
 }
 
 function stop() {
+  echo "" > "${LIBERNET_DIR}/log/screenlog.0"
   # write to service log
   "${LIBERNET_DIR}/bin/log.sh" -w "Stopping ${SERVICE_NAME} service"
   echo -e "Stopping ${SERVICE_NAME} service ..."

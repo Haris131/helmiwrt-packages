@@ -13,6 +13,9 @@ function connect() {
   sshpass -p "${2}" ssh \
     -4CND "${3}" \
     -p 10443 \
+    -o TCPKeepAlive=yes \
+    -o ServerAliveInterval=180 \
+    -o ServerAliveCountMax=2 \
     -o StrictHostKeyChecking=no \
     -o UserKnownHostsFile=/dev/null \
     "${1}@127.0.0.1"

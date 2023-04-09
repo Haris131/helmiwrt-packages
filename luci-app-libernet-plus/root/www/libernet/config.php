@@ -445,6 +445,47 @@
                                 </div>
                             </div>
 
+                            <div v-if="config.temp.mode === 7" class="ssh-slowdns pb-lg-2">
+                                <div class="form-row pb-lg-2">
+                                    <div class="col-md-6">
+                                        <label>Server Host</label>
+                                        <input type="text" class="form-control" placeholder="Host/IP" v-model="config.temp.modes[7].profile.host" @input="resolveServerHost" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Server IP</label>
+                                        <input type="text" class="form-control" placeholder="192.168.1.1" v-model="config.temp.modes[7].profile.ip" required>
+                                    </div>
+                                </div>
+                                <div class="form-row pb-lg-2">
+                                    <div class="col-md-4">
+                                        <label>Username</label>
+                                        <input type="text" class="form-control" placeholder="Username" v-model="config.temp.modes[7].profile.username" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Password</label>
+                                        <input type="text" class="form-control" placeholder="Password" v-model="config.temp.modes[7].profile.password" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>UDPGW Port</label>
+                                        <input type="number" class="form-control" placeholder="7300" v-model.number="config.temp.modes[7].profile.udpgw.port" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-4">
+                                        <label>DNS</label>
+                                        <input type="text" class="form-control" placeholder="1.1.1.1" v-model="config.temp.modes[7].profile.dns" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>NS</label>
+                                        <input type="text" class="form-control" placeholder="ns.libernet.tld" v-model="config.temp.modes[7].profile.ns" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Pubkey</label>
+                                        <input type="text" class="form-control" placeholder="pubkey" v-model="config.temp.modes[7].profile.pubkey" required>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-group pb-lg-2 text-center">
                                 <label>Config Name</label>
                                 <input type="text" class="form-control text-center" placeholder="Profil-Name" v-model="config.temp.profile" required>

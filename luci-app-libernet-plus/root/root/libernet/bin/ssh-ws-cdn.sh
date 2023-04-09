@@ -26,6 +26,8 @@ DYNAMIC_PORT="$(grep 'port":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g;
 ENABLE_HTTP="$(grep 'enable_http":' ${SSH_WS_CDN_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
 
 function run() {
+  cd "${LIBERNET_DIR}/log"
+  echo "" > screenlog.0
   # write to service log
   "${LIBERNET_DIR}/bin/log.sh" -w "Config: ${SSH_WS_CDN_PROFILE}, Mode: ${SERVICE_NAME}"
   if [[ "${ENABLE_HTTP}" == 'true' ]]; then
@@ -34,12 +36,13 @@ function run() {
       && "${LIBERNET_DIR}/bin/stunnel.sh" -r "ssh_ws_cdn" "${SSH_WS_CDN_PROFILE}" "${CDN_IP}" "${CDN_PORT}" "${CDN_SNI}" \
       && "${LIBERNET_DIR}/bin/log.sh" -w "Starting ${SERVICE_NAME} service" \
       && echo -e "Starting ${SERVICE_NAME} service ..." \
-      && screen -AmdS ssh-connector "${LIBERNET_DIR}/bin/ssh-loop.sh" -e "${SSH_WS_CDN_USER}" "${SSH_WS_CDN_PASS}" "${SSH_WS_CDN_HOST}" "${SSH_WS_CDN_PORT}" "${DYNAMIC_PORT}" "${PROXY_IP}" "${PROXY_PORT}" \
+      && screen -L -AmdS ssh-connector "${LIBERNET_DIR}/bin/ssh-loop.sh" -e "${SSH_WS_CDN_USER}" "${SSH_WS_CDN_PASS}" "${SSH_WS_CDN_HOST}" "${SSH_WS_CDN_PORT}" "${DYNAMIC_PORT}" "${PROXY_IP}" "${PROXY_PORT}" \
       && echo -e "${SERVICE_NAME} service started!"
   fi
 }
 
 function stop() {
+  echo "" > "${LIBERNET_DIR}/log/screenlog.0"
   # write to service log
   "${LIBERNET_DIR}/bin/log.sh" -w "Stopping ${SERVICE_NAME} service"
   echo -e "Stopping ${SERVICE_NAME} service ..."

@@ -56,6 +56,10 @@ const app = new Vue({
                             value: 6,
                             name: "SSH-WS-CDN",
                         },
+                        {
+                            value: 7,
+                            name: "SSH-SlowDNS",
+                        },
                     ]
                 },
                 system: {
@@ -162,6 +166,9 @@ const app = new Vue({
                 case 6:
                     action = "get_sshwscdn_configs"
                     break
+                case 7:
+                    action = "get_sshslowdns_configs"
+                    break
             }
             axios.post('api.php', {
                 action: action
@@ -216,19 +223,6 @@ const app = new Vue({
                 this.getWanIp()
             }, 2000)
         },
-		/*getWanIsp() {
-            return new Promise((resolve) => {
-                axios.get('http://ip-api.com/json/?fields=isp').then((res) => {
-                    this.wan_net = res.data.isp
-                    resolve(res)
-                })
-            })
-        },
-        intervalGetWanIsp() {
-            setInterval(() => {
-                this.getWanIsp()
-            }, 100)
-        },*/
         getDashboardInfo() {
             return new Promise((resolve) => {
                 axios.post('api.php', {
@@ -302,6 +296,9 @@ const app = new Vue({
                 case 6:
                     this.config.profile = res.tunnel.profile.ssh_ws_cdn
                     break
+                case 7:
+                    this.config.profile = res.tunnel.profile.ssh_slowdns
+                    break
             }
         })
         this.getDashboardInfo().then(() => {
@@ -312,6 +309,5 @@ const app = new Vue({
             this.intervalGetDashboardInfo()
         })
         this.getWanIp().then(() => this.intervalGetWanIp()).catch(() => this.intervalGetWanIp())
-		//this.getWanIsp().then(() => this.intervalGetWanIsp()).catch(() => this.intervalGetWanIsp())
     }
 })

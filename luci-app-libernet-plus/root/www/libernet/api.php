@@ -1,7 +1,5 @@
 <?php
     include('config.inc.php');
-    //include('auth.php');
-    //check_session();
 
     function json_response($data) {
         $resp = array(
@@ -117,6 +115,10 @@
                 $profile = $json['profile'];
                 get_config('ssh_ws_cdn', $profile);
                 break;
+            case 'get_sshslowdns_config':
+                $profile = $json['profile'];
+                get_config('ssh_slowdns', $profile);
+                break;
             case 'get_v2ray_configs':
                 get_profiles('v2ray');
                 break;
@@ -137,6 +139,9 @@
                 break;
             case 'get_sshwscdn_configs':
                 get_profiles('ssh_ws_cdn');
+				break;
+			case 'get_sshslowdns_configs':
+                get_profiles('ssh_slowdns');
 				break;
 			case 'restart_libernet':
                 $system_config = file_get_contents($libernet_dir.'/system/config.json');
@@ -162,9 +167,16 @@
                 $status = file_get_contents($libernet_dir.'/log/status.log');
                 $log = file_get_contents($libernet_dir.'/log/service.log');
                 $connected = file_get_contents($libernet_dir.'/log/connected.log');
+                $system_config = file_get_contents($libernet_dir.'/system/config.json');
+                $tundev = json_decode($system_config)->tun2socks->dev;
                 // use hard coded tun device
-                exec("ifconfig tun1 | grep 'bytes:' | awk '{print $3, $4}' | sed 's/(//g; s/)//g'", $rx);
-                exec("ifconfig tun1 | grep 'bytes:' | awk '{print $7, $8}' | sed 's/(//g; s/)//g'", $tx);
+                if (file_exists("/usr/bin/hsize")) {
+                	exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $2}' | awk -F ' ' '{print $1}' | hsize", $rx);
+                    exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $3}' | awk -F ' ' '{print $1}' | hsize", $tx);
+                } else {
+                	exec("ifconfig $tundev | grep 'bytes:' | awk '{print $3, $4}' | sed 's/(//g; s/)//g'", $rx);
+                    exec("ifconfig $tundev | grep 'bytes:' | awk '{print $7, $8}' | sed 's/(//g; s/)//g'", $tx);
+                    }
                 json_response(array(
                     'status' => intval($status),
                     'log' => $log,
@@ -318,6 +330,11 @@
                             file_put_contents($libernet_dir.'/bin/config/ssh_ws_cdn/'.$profile.'.json', json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
                             json_response('SSH-WS-CDN config saved');
                             break;
+                        // ssh
+                        case 7:
+                            file_put_contents($libernet_dir.'/bin/config/ssh_slowdns/'.$profile.'.json', json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                            json_response('SSH-SlowDNS config saved');
+                            break;
                     }
                 }
                 break;
@@ -397,6 +414,16 @@
                             $system_config->tun2socks->udpgw->ip = $ssh_ws_cdn_config->udpgw->ip;
                             $system_config->tun2socks->udpgw->port = $ssh_ws_cdn_config->udpgw->port;
                             break;
+                        // ssh slowdns
+                        case 7:
+                            $ssh_slowdns_config = file_get_contents($libernet_dir.'/bin/config/ssh_slowdns/'.$profile.'.json');
+                            $ssh_slowdns_config = json_decode($ssh_slowdns_config);
+                            $system_config->tunnel->profile->ssh_slowdns = $profile;
+                            $system_config->server = $ssh_slowdns_config->ip;
+                            $system_config->cdn_server = $ssh_slowdns_config->dns;
+                            $system_config->tun2socks->udpgw->ip = $ssh_slowdns_config->udpgw->ip;
+                            $system_config->tun2socks->udpgw->port = $ssh_slowdns_config->udpgw->port;
+                            break;
                     }
                     $system_config->tunnel->mode = $mode;
                     $system_config->tun2socks->legacy = $tun2socks_legacy;
@@ -439,9 +466,13 @@
                             unlink($libernet_dir.'/bin/config/openvpn/'.$profile.'.json');
                             json_response('OpenVPN config removed');
                             break;
-                        case 6;
+                        case 6:
                             unlink($libernet_dir.'/bin/config/ssh_ws_cdn/'.$profile.'.json');
                             json_response('SSH-WS-CDN config removed');
+                            break;
+                        case 7:
+                            unlink($libernet_dir.'/bin/config/ssh_slowdns/'.$profile.'.json');
+                            json_response('SSH-SlowDNS config removed');
                             break;
                     }
                 }
@@ -455,18 +486,6 @@
                     json_response("Libernet service auto start disabled");
                 }
                 break;
-            case 'check_update':
-                $update_status = file_get_contents($libernet_dir.'/log/update.log');
-                json_response($update_status);
-                break;
-            case 'update_libernet':
-                $output = null;
-                $retval = null;
-                exec('export LIBERNET_DIR="'.$libernet_dir.'" && '.$libernet_dir.'/update.sh -web > /dev/null 2>&1 &', $output, $retval);
-                if (!$retval) {
-                    json_response('Libernet updated!');
-                }
-                break;
             case 'resolve_host':
                 $output = null;
                 $retval = null;
@@ -475,15 +494,6 @@
                 if (!$retval) {
                     json_response($output);
                 }
-                break;
-            case 'change_password':
-                $password = $json['password'];
-                $system_config = file_get_contents($libernet_dir.'/system/config.json');
-                $system_config = json_decode($system_config);
-                $system_config->system->password = $password;
-                $system_config = json_encode($system_config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-                file_put_contents($libernet_dir.'/system/config.json', $system_config);
-                json_response("Password changed");
                 break;
         }
     }
