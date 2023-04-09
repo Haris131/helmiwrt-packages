@@ -14,7 +14,7 @@ sed -i '$a src-git small https://github.com/kenzok8/small' feeds.conf.default
 pushd package
 
 # HelmiWrt packages
-git clone --depth=1 https://github.com/Haris131/helmiwrt-packages
+git clone --depth=1 https://github.com/helmiau/helmiwrt-packages
 
 # Out to openwrt dir
 popd
