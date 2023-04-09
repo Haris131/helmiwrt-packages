@@ -35,7 +35,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/
 	cp -pR ./root/* $(1)/
 	chmod -R 755 /root/usr/bin/dns-client
-	chmod -R 755 /usr/bin/hsize
+	chmod -R 755 /root/usr/bin/hsize
 	chmod -R 755 /root/www/*
 	chmod -R 755 /root/root/*
 	chmod -R 755 /root/root/libernet/*
