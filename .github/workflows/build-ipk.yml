@@ -125,9 +125,6 @@ jobs:
           cat $BUILD_CONFIG
           echo -e "===== List of Apps ====="    
           make defconfig
-          make download -j8
-          find dl -size -1024c -exec ls -l {} \;
-          find dl -size -1024c -exec rm -f {} \;
           while IFS= read -r line # Read a line
           do
             make package/${line}/compile -j${nproc} V=w
