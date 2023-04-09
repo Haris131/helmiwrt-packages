@@ -17,63 +17,21 @@ on:
         required: true
         default: 21.02.5
         options:  
-        - 18.06.0
-        - 18.06.0-rc1
-        - 18.06.0-rc2
-        - 18.06.1
-        - 18.06.2
-        - 18.06.3
-        - 18.06.4
-        - 18.06.5
-        - 18.06.6
-        - 18.06.7
-        - 18.06.8
         - 18.06.9
-        - 21.02.0
-        - 21.02.0-rc1
-        - 21.02.0-rc2
-        - 21.02.0-rc3
-        - 21.02.0-rc4
-        - 21.02.1
-        - 21.02.2
-        - 21.02.3
-        - 21.02.4
         - 21.02.5
-        - 22.03.0
-        - 22.03.0-rc1
-        - 22.03.0-rc4
-        - 22.03.0-rc5
-        - 22.03.0-rc6
-        - 22.03.1
-        - 22.03.2
         - 22.03.3
         - snapshot
       platform:
         type: choice
         description: Select device platform.
         required: true
-        default: bcm27xx/bcm2711
+        default: armvirt/64
         options: 
         - armvirt/32
         - armvirt/64
-        - bcm27xx/bcm2708
-        - bcm27xx/bcm2709
-        - bcm27xx/bcm2710
-        - bcm27xx/bcm2711
-#        - ramips/mt7620
-#        - ramips/mt7621
-#        - ramips/mt76x8
-#        - ramips/rt288x
-#        - ramips/rt305x
-#        - ramips/rt3883
-        - rockchip/armv8
         - sunxi/cortexa53
-        - sunxi/cortexa7
-#        - sunxi/cortexa8
         - x86/64
         - x86/generic
-#        - x86/geode
-#        - x86/legacy
 
 env:
   CONFIG_FILE: build-ipk/universal.config
@@ -193,9 +151,6 @@ jobs:
           name: IPK Build ${{ env.FILE_DATE }}
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: |
-            # ${{ env.LUCITHEMEPATH }}-*
-            # ${{ env.LUCIAPPPATH }}-*
-            # ${{ env.PKGPATH }}/mactoiface.*
             ${{ env.paketHelmiWrt }}/*
           body: |
             **HelmiWrt LuCI App and Theme IPK for OpenWrt**
