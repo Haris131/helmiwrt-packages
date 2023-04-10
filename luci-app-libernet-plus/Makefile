@@ -34,8 +34,6 @@ define Package/$(PKG_NAME)/install
 	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci
 	$(INSTALL_DIR) $(1)/
 	cp -pR ./root/* $(1)/
-	chmod -R 755 /root/usr/bin/dns-client
-	chmod -R 755 /root/usr/bin/hsize
 	chmod -R 755 /root/www/*
 	chmod -R 755 /root/root/*
 	chmod -R 755 /root/root/libernet/*
@@ -48,8 +46,6 @@ define Package/$(PKG_NAME)/postinst
 	find /tmp -type f -name 'luci-indexcache.*' -exec rm -f {};
 	chmod -R 755 /usr/lib/lua/luci/controller/*
 	chmod -R 755 /usr/lib/lua/luci/view/*
-	chmod -R 755 /usr/bin/dns-client
-	chmod -R 755 /usr/bin/hsize
 	chmod -R 755 /www/*
 	chmod -R 755 /www/libernet/*
 	chmod -R 755 /root/libernet/*
