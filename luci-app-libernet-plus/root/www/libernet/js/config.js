@@ -226,7 +226,7 @@ const app = new Vue({
                 profile: this.config.profile
             }).then((res) => {
                 const temp = this.config.temp
-                temp.mode = 2
+                temp.mode = 1
                 temp.profile = this.config.profile
                 temp.modes[1].profile = res.data.data
             })
@@ -237,7 +237,7 @@ const app = new Vue({
                 profile: this.config.profile
             }).then((res) => {
                 const temp = this.config.temp
-                temp.mode = 6
+                temp.mode = 2
                 temp.profile = this.config.profile
                 temp.modes[2].profile = res.data.data
             })
@@ -248,7 +248,7 @@ const app = new Vue({
                 profile: this.config.profile
             }).then((res) => {
                 const temp = this.config.temp
-                temp.mode = 7
+                temp.mode = 3
                 temp.profile = this.config.profile
                 temp.modes[3].profile = res.data.data
             })
