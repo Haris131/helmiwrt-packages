@@ -21,7 +21,7 @@ function loop() {
 n=0
 while [ 1 ]; do
   r=$(curl -m4 88.198.46.60 -w "%{http_code}" --proxy socks5://"${SOCKS_SERVER}" -s -o /dev/null | head -c2)
-  ip=$(jq .server '${LIBERNET_DIR}/system/config.json' | sed ' s/"//g')
+  ip=$(jq .server "${LIBERNET_DIR}/system/config.json" | sed ' s/"//g')
   echo $r $ip
   if [ $r -eq 30 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
@@ -33,7 +33,7 @@ while [ 1 ]; do
   else
     echo ping fail
     n=$((n+1))
-	"${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
+    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
     sleep 1
     R1=$(cat /sys/class/net/"${TUN_DEV}"/statistics/rx_bytes)
     sleep 1
@@ -64,22 +64,22 @@ done
 #stop libernet
 recon(){
     stop_services
-	sleep 2
-	start_services
+    sleep 2
+    start_services
 }
 
 function start_services() {
   # write to service log
   case "${TUNNEL_MODE}" in
     "0")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH"
+      "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH"
       "${LIBERNET_DIR}/bin/ssh.sh" -r
       ;;
     "1")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH-SSL"
+      "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH-SSL"
       "${LIBERNET_DIR}/bin/ssh-ssl.sh" -r
       ;;
-	"2")
+    "2")
 	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-ws-cdn"
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -r
       ;;
@@ -103,10 +103,10 @@ function stop_services() {
     "1")
       "${LIBERNET_DIR}/bin/ssh-ssl.sh" -s
       ;;
-	"2")
+    "2")
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -s
       ;;
-     "3")
+    "3")
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -s
       ;;
   esac
