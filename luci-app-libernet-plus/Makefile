@@ -15,8 +15,8 @@ LUCI_DEPENDS:=+coreutils +coreutils-stdbuf +jq +ip-full +kmod-tun +openssh-clien
 	+badvpn +corkscrew +sshpass +bash +curl +librt +libpthread +screen
 
 PKG_NAME:=luci-app-libernet-plus
-PKG_VERSION:=2.0
-PKG_RELEASE:=4
+PKG_VERSION:=2.1
+PKG_RELEASE:=2
 
 define Package/$(PKG_NAME)
 	$(call Package/luci/webtemplate)
@@ -33,12 +33,11 @@ define Package/$(PKG_NAME)/install
 	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci
 	$(INSTALL_DIR) $(1)/
 	cp -pR ./root/* $(1)/
-	chmod -R 755 /root/usr/bin/hsize
-	chmod -R 755 /root/usr/bin/dnstt-client
 	chmod -R 755 /root/www/*
 	chmod -R 755 /root/root/*
 	chmod -R 755 /root/root/libernet/*
 	chmod -R 755 /root/root/libernet/bin/*
+	chmod -R 755 /root/root/usr/bin/*
 endef
 
 define Package/$(PKG_NAME)/postinst
@@ -47,12 +46,12 @@ define Package/$(PKG_NAME)/postinst
 	find /tmp -type f -name 'luci-indexcache.*' -exec rm -f {};
 	chmod -R 755 /usr/lib/lua/luci/controller/*
 	chmod -R 755 /usr/lib/lua/luci/view/*
-	chmod -R 755 /root/usr/bin/hsize
-	chmod -R 755 /root/usr/bin/dnstt-client
 	chmod -R 755 /www/*
 	chmod -R 755 /www/libernet/*
 	chmod -R 755 /root/libernet/*
 	chmod -R 755 /root/libernet/bin/*
+	chmod -R 755 /usr/bin/hsize
+	chmod -R 755 /usr/bin/dnstt-client
 	# Autofix download index.php, index.html
 	if ! grep -q ".php=/usr/bin/php-cgi" /etc/config/uhttpd; then
 		echo -e "Enabling uhttp php execution"

@@ -21,7 +21,7 @@ function loop() {
 n=0
 while [ 1 ]; do
   r=$(curl -m4 88.198.46.60 -w "%{http_code}" --proxy socks5://"${SOCKS_SERVER}" -s -o /dev/null | head -c2)
-  ip=$(jq .server '/root/libernet/system/config.json' | sed ' s/"//g')
+  ip=$(jq .server '${LIBERNET_DIR}/system/config.json' | sed ' s/"//g')
   echo $r $ip
   if [ $r -eq 30 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
@@ -76,30 +76,14 @@ function start_services() {
       "${LIBERNET_DIR}/bin/ssh.sh" -r
       ;;
     "1")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart v2ray"
-      "${LIBERNET_DIR}/bin/v2ray.sh" -r
-      ;;
-    "2")
 	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH-SSL"
       "${LIBERNET_DIR}/bin/ssh-ssl.sh" -r
       ;;
-    "3")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart Trojan"
-      "${LIBERNET_DIR}/bin/trojan.sh" -r
-      ;;
-    "4")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart shadowsocks"
-      "${LIBERNET_DIR}/bin/shadowsocks.sh" -r
-      ;;
-	"5")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart openvpn"
-      "${LIBERNET_DIR}/bin/openvpn.sh" -r
-      ;;
-	"6")
+	"2")
 	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-ws-cdn"
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -r
       ;;
-    "7")
+    "3")
       "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-slowdns"
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -r
       ;;
@@ -117,24 +101,12 @@ function stop_services() {
       "${LIBERNET_DIR}/bin/ssh.sh" -s
       ;;
     "1")
-      "${LIBERNET_DIR}/bin/v2ray.sh" -s
-      ;;
-    "2")
       "${LIBERNET_DIR}/bin/ssh-ssl.sh" -s
       ;;
-    "3")
-      "${LIBERNET_DIR}/bin/trojan.sh" -s
-      ;;
-    "4")
-      "${LIBERNET_DIR}/bin/shadowsocks.sh" -s
-      ;;
-    "5")
-      "${LIBERNET_DIR}/bin/openvpn.sh" -s
-      ;;
-	"6")
+	"2")
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -s
       ;;
-     "7")
+     "3")
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -s
       ;;
   esac

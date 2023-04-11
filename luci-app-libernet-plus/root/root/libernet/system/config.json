@@ -1,17 +1,12 @@
 {
     "tunnel": {
         "autostart": false,
-        "dns_resolver": false,
-        "ping_loop": false,
+        "dns_resolver": true,
         "auto_recon": true,
         "mode": 0,
         "profile": {
             "ssh": "",
-            "v2ray": "",
             "ssh_ssl": "",
-            "trojan": "",
-            "shadowsocks": "",
-            "openvpn": "",
             "ssh_ws_cdn": "",
             "ssh_slowdns": ""
         }
@@ -37,6 +32,6 @@
         }
     },
     "system": {
-        "memory_cleaner": false
+        "memory_cleaner": true
     }
 }
