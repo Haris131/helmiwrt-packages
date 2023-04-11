@@ -19,6 +19,9 @@ git clone --depth=1 https://github.com/helmiau/helmiwrt-packages
 # Out to openwrt dir
 popd
 
+rm package/helmiwrt-packages/luci-app-libernet-plus/Makefile
+wget https://raw.githubusercontent.com/helmiau/helmiwrt-packages/main/luci-app-libernet-plus/Makefile -O package/helmiwrt-packages/luci-app-libernet-plus/Makefile
+
 #-----------------------------------------------------------------------------
 #   End of @helmiau terminal scripts additionals menu
 #-----------------------------------------------------------------------------
