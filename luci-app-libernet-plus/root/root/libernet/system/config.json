@@ -4,19 +4,19 @@
         "dns_resolver": false,
         "ping_loop": false,
         "auto_recon": true,
-        "mode": 2,
+        "mode": 0,
         "profile": {
-            "ssh": "akrab",
-            "v2ray": "nusa",
-            "ssh_ssl": "akrab",
+            "ssh": "",
+            "v2ray": "",
+            "ssh_ssl": "",
             "trojan": "",
             "shadowsocks": "",
             "openvpn": "",
-            "ssh_ws_cdn": "akrab",
-            "ssh_slowdns": "slow_05-04-2023"
+            "ssh_ws_cdn": "",
+            "ssh_slowdns": ""
         }
     },
-    "server": "103.227.252.231",
+    "server": "",
     "cdn_server": "",
     "dns_servers": [],
     "proxy_servers": [],
