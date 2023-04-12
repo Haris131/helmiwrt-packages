@@ -21,7 +21,7 @@ function run() {
   # write to service log
   "${LIBERNET_DIR}/bin/log.sh" -w "Starting ${SERVICE_NAME} service"
   echo -e "Starting ${SERVICE_NAME} service ..."
-  screen -AmdS dns-client dns-client -udp "${SSH_DNS}:53" -pubkey "${SSH_PUBKEY}" "${SSH_NS}" 127.0.0.1:2222 \
+  screen -AmdS dnstt-client dnstt-client -udp "${SSH_DNS}:53" -pubkey "${SSH_PUBKEY}" "${SSH_NS}" 127.0.0.1:2222 \
     && echo -e "${SERVICE_NAME} service started!"
 }
 
@@ -29,7 +29,7 @@ function stop() {
   # write to service log
   "${LIBERNET_DIR}/bin/log.sh" -w "Stopping ${SERVICE_NAME} service"
   echo -e "Stopping ${SERVICE_NAME} service ..."
-  kill $(screen -list | grep dns-client | awk -F '[.]' {'print $1'})
+  kill $(screen -list | grep dnstt-client | awk -F '[.]' {'print $1'})
   echo -e "${SERVICE_NAME} service stopped!"
 }
 
