@@ -1,0 +1,12 @@
+{
+    "ip": "103.167.35.23",
+    "host": "1idws.aixxy.cloud",
+    "port": 443,
+    "username": "Chewy",
+    "password": "123456",
+    "sni": "kh.google.com",
+    "udpgw": {
+        "ip": "127.0.0.1",
+        "port": 7300
+    }
+}

@@ -1,17 +1,22 @@
 {
     "tunnel": {
         "autostart": false,
-        "dns_resolver": true,
+        "dns_resolver": false,
+        "ping_loop": false,
         "auto_recon": true,
-        "mode": 0,
+        "mode": 2,
         "profile": {
-            "ssh": "",
-            "ssh_ssl": "",
-            "ssh_ws_cdn": "",
-            "ssh_slowdns": ""
+            "ssh": "akrab",
+            "v2ray": "nusa",
+            "ssh_ssl": "akrab",
+            "trojan": "",
+            "shadowsocks": "",
+            "openvpn": "",
+            "ssh_ws_cdn": "akrab",
+            "ssh_slowdns": "slow_05-04-2023"
         }
     },
-    "server": "",
+    "server": "103.227.252.231",
     "cdn_server": "",
     "dns_servers": [],
     "proxy_servers": [],
@@ -32,6 +37,6 @@
         }
     },
     "system": {
-        "memory_cleaner": true
+        "memory_cleaner": false
     }
 }

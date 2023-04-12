@@ -12,18 +12,14 @@ fi
 SERVICE_NAME="Auto Reconnect"
 SYSTEM_CONFIG="${LIBERNET_DIR}/system/config.json"
 TUNNEL_MODE="$(grep 'mode":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
-TUN_DEV="$(grep 'dev":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
-SOCKS_IP="$(grep 'ip":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g' | sed -n '1p')"
-SOCKS_PORT="$(grep 'port":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g' | sed -n '1p')"
-SOCKS_SERVER="${SOCKS_IP}:${SOCKS_PORT}"
 
 function loop() {
 n=0
 while [ 1 ]; do
-  r=$(curl -m4 88.198.46.60 -w "%{http_code}" --proxy socks5://"${SOCKS_SERVER}" -s -o /dev/null | head -c2)
-  ip=$(jq .server "${LIBERNET_DIR}/system/config.json" | sed ' s/"//g')
-  echo $r $ip
-  if [ $r -eq 30 ]; then
+  wan=$(curl --connect-timeout 10 'https://api.ipify.org/?format=json' | jq '.ip' | sed ' s/"//g')
+  ip=$(jq .server '/root/libernet/system/config.json' | sed ' s/"//g')
+  echo $wan $ip
+  if  [ $wan = $ip ]; then
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
     sleep 1
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">HTTP/1.1 200 OK [IP: ${ip}]</span>"
@@ -33,27 +29,21 @@ while [ 1 ]; do
   else
     echo ping fail
     n=$((n+1))
-    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
+	"${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
     sleep 1
-    R1=$(cat /sys/class/net/"${TUN_DEV}"/statistics/rx_bytes)
-    sleep 1
-    R2=$(cat /sys/class/net/"${TUN_DEV}"/statistics/rx_bytes)
-    RBPS=$(expr $R2 - $R1)
-    RKBPS=$(expr $RBPS / 1024)
-    if [ $RKBPS -gt 300 ]; then
-      "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: green\">Sedang ada data transfer besar</span>"
-      sleep 3
-      n=0
-    else
-      "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Failed ${n}</span>"
-    fi
+    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Failed ${n}</span>"
+    sleep 3
   fi
   echo fail counter $n
   log_file=$(cat "${LIBERNET_DIR}/log/service.log" | wc -l)
   if [ $log_file -gt 50 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -r
   fi
-  if [ $n -gt 4 ]; then
+  if [ -f $(grep -c "Connection closed" ${LIBERNET_DIR}/log/screenlog.0) ]; then
+    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: green\">Auto Reconnecting</span>"
+    n=0
+    recon
+  elif [ $n -gt 4 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: green\">Auto Reconnecting</span>"
     n=0
     recon
@@ -64,26 +54,42 @@ done
 #stop libernet
 recon(){
     stop_services
-    sleep 2
-    start_services
+	sleep 2
+	start_services
 }
 
 function start_services() {
   # write to service log
   case "${TUNNEL_MODE}" in
     "0")
-      "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH"
+	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH"
       "${LIBERNET_DIR}/bin/ssh.sh" -r
       ;;
     "1")
-      "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH-SSL"
-      "${LIBERNET_DIR}/bin/ssh-ssl.sh" -r
+	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart v2ray"
+      "${LIBERNET_DIR}/bin/v2ray.sh" -r
       ;;
     "2")
+	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH-SSL"
+      "${LIBERNET_DIR}/bin/ssh-ssl.sh" -r
+      ;;
+    "3")
+	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart Trojan"
+      "${LIBERNET_DIR}/bin/trojan.sh" -r
+      ;;
+    "4")
+	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart shadowsocks"
+      "${LIBERNET_DIR}/bin/shadowsocks.sh" -r
+      ;;
+	"5")
+	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart openvpn"
+      "${LIBERNET_DIR}/bin/openvpn.sh" -r
+      ;;
+	"6")
 	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-ws-cdn"
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -r
       ;;
-    "3")
+    "7")
       "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-slowdns"
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -r
       ;;
@@ -101,12 +107,24 @@ function stop_services() {
       "${LIBERNET_DIR}/bin/ssh.sh" -s
       ;;
     "1")
-      "${LIBERNET_DIR}/bin/ssh-ssl.sh" -s
+      "${LIBERNET_DIR}/bin/v2ray.sh" -s
       ;;
     "2")
-      "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -s
+      "${LIBERNET_DIR}/bin/ssh-ssl.sh" -s
       ;;
     "3")
+      "${LIBERNET_DIR}/bin/trojan.sh" -s
+      ;;
+    "4")
+      "${LIBERNET_DIR}/bin/shadowsocks.sh" -s
+      ;;
+    "5")
+      "${LIBERNET_DIR}/bin/openvpn.sh" -s
+      ;;
+	"6")
+      "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -s
+      ;;
+     "7")
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -s
       ;;
   esac

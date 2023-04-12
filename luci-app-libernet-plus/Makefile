@@ -11,8 +11,10 @@ include $(TOPDIR)/rules.mk
 LUCI_TITLE:=LuCI Libernet Plus App
 LUCI_PKGARCH:=all
 LUCI_DEPENDS:=+coreutils +coreutils-stdbuf +jq +ip-full +kmod-tun +openssh-client \
-	+php7 +php7-cgi +php7-mod-json +php7-mod-session +python3 +stunnel +stubby \
-	+badvpn +corkscrew +sshpass +bash +curl +librt +libpthread +screen
+	+php7 +php7-cgi +php7-mod-json +php7-mod-session +python3 +httping +stunnel +stubby \
+	+badvpn +corkscrew +simple-obfs +sshpass +trojan-go +v2ray-core \
+	+bash +curl +librt +libpthread +screen +shadowsocks-libev-ss-local +openvpn-openssl
+
 
 PKG_NAME:=luci-app-libernet-plus
 PKG_VERSION:=2.1
@@ -89,11 +91,9 @@ endef
 
 define Package/$(PKG_NAME)/postrm
 #!/bin/sh
-	export NAMAPAKET="libernet"
-	if [ -d /www/$NAMAPAKET ] ; then
-		rm -rf /www/$NAMAPAKET
+	if [ -d /www/libernet ] ; then
+		rm -rf /www/libernet
 	fi
-	unset NAMAPAKET
 exit 0
 endef
 

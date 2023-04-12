@@ -34,14 +34,30 @@ const app = new Vue({
                         },
                         {
                             value: 1,
-                            name: "SSH-SSL"
+                            name: "V2Ray"
                         },
                         {
                             value: 2,
-                            name: "SSH-WS-CDN",
+                            name: "SSH-SSL"
                         },
                         {
                             value: 3,
+                            name: "Trojan"
+                        },
+                        {
+                            value: 4,
+                            name: "Shadowsocks"
+                        },
+                        {
+                            value: 5,
+                            name: "OpenVPN"
+                        },
+                        {
+                            value: 6,
+                            name: "SSH-WS-CDN",
+                        },
+                        {
+                            value: 7,
                             name: "SSH-SlowDNS",
                         },
                     ]
@@ -50,6 +66,7 @@ const app = new Vue({
                     tunnel: {
                         autostart: false,
                         dns_resolver: false,
+                        ping_loop: false,
 						auto_recon: false
                     },
                     tun2socks: {
@@ -132,12 +149,24 @@ const app = new Vue({
                     action = "get_ssh_configs"
                     break
                 case 1:
-                    action = "get_sshl_configs"
+                    action = "get_v2ray_configs"
                     break
                 case 2:
-                    action = "get_sshwscdn_configs"
+                    action = "get_sshl_configs"
                     break
                 case 3:
+                    action = "get_trojan_configs"
+                    break
+                case 4:
+                    action = "get_shadowsocks_configs"
+                    break
+                case 5:
+                    action = "get_openvpn_configs"
+                    break
+                case 6:
+                    action = "get_sshwscdn_configs"
+                    break
+                case 7:
                     action = "get_sshslowdns_configs"
                     break
             }
@@ -162,6 +191,7 @@ const app = new Vue({
                         tun2socks_legacy: this.config.system.tun2socks.legacy,
                         dns_resolver: this.config.system.tunnel.dns_resolver,
                         memory_cleaner: this.config.system.system.memory_cleaner,
+                        ping_loop: this.config.system.tunnel.ping_loop,
 						auto_recon: this.config.system.tunnel.auto_recon
                     }
                 }).then((res) => {
@@ -249,12 +279,24 @@ const app = new Vue({
                     this.config.profile = res.tunnel.profile.ssh
                     break
                 case 1:
-                    this.config.profile = res.tunnel.profile.ssh_ssl
+                    this.config.profile = res.tunnel.profile.v2ray
                     break
                 case 2:
-                    this.config.profile = res.tunnel.profile.ssh_ws_cdn
+                    this.config.profile = res.tunnel.profile.ssh_ssl
                     break
                 case 3:
+                    this.config.profile = res.tunnel.profile.trojan
+                    break
+                case 4:
+                    this.config.profile = res.tunnel.profile.shadowsocks
+                    break
+                case 5:
+                    this.config.profile = res.tunnel.profile.openvpn
+                    break
+                case 6:
+                    this.config.profile = res.tunnel.profile.ssh_ws_cdn
+                    break
+                case 7:
                     this.config.profile = res.tunnel.profile.ssh_slowdns
                     break
             }

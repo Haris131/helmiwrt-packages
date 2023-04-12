@@ -1,0 +1,28 @@
+{
+    "ip": "103.167.35.23",
+    "host": "1idws.aixxy.cloud",
+    "port": 443,
+    "username": "Chewy",
+    "password": "123456",
+    "udpgw": {
+        "ip": "127.0.0.1",
+        "port": 7300
+    },
+    "enable_http": true,
+    "http": {
+        "buffer": 32767,
+        "ip": "127.0.0.1",
+        "port": 9876,
+        "info": "HTTP Proxy",
+        "payload": "GET / HTTP/1.1[crlf]Host: [host][crlf]Upgrade: websocket[crlf][crlf]",
+        "proxy": {
+            "ip": "127.0.0.1",
+            "port": 10443
+        },
+        "cdn": {
+            "sni": "1idws.aixxy.cloud",
+            "ip": "104.26.4.10",
+            "port": 443
+        }
+    }
+}

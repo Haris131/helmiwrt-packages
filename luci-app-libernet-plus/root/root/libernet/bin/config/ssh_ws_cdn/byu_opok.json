@@ -1,0 +1,28 @@
+{
+    "ip": "103.227.252.231",
+    "host": "vip.ipservers.xyz",
+    "port": 443,
+    "username": "Chewys",
+    "password": "123456",
+    "udpgw": {
+        "ip": "127.0.0.1",
+        "port": 7300
+    },
+    "enable_http": true,
+    "http": {
+        "buffer": 32767,
+        "ip": "127.0.0.1",
+        "port": 9876,
+        "info": "HTTP Proxy",
+        "payload": "GET /cdn-cgi/trace HTTP/1.1[crlf]Host: space.byu.id[crlf][crlf]CF-RAY / HTTP/1.1[crlf]Host: vip.ipservers.xyz[crlf]Upgrade: websocket[crlf][crlf]",
+        "proxy": {
+            "ip": "127.0.0.1",
+            "port": 10443
+        },
+        "cdn": {
+            "sni": "vip.ipservers.xyz",
+            "ip": "162.159.128.79",
+            "port": 443
+        }
+    }
+}

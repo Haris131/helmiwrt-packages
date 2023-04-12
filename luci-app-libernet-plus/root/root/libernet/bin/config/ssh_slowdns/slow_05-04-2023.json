@@ -1,0 +1,13 @@
+{
+    "ip": "51.89.151.107",
+    "host": "ns-uk.serverssh.net",
+    "username": "Magess",
+    "password": "123456",
+    "dns": "1.1.1.1",
+    "ns": "dns-uk.serverssh.net",
+    "pubkey": "1bf8cc55d4c58bf428cd7eaa97b37feeac5828d6c737add30446ce74da9a7e33",
+    "udpgw": {
+        "ip": "127.0.0.1",
+        "port": 7300
+    }
+}

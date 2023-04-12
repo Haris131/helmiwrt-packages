@@ -75,14 +75,14 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-md-6 pb-lg-1">
+                                <!-- <div class="col-lg-6 col-md-6 pb-lg-1">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" v-model="config.system.system.memory_cleaner" :disabled="status === true" id="memory-cleaner">
                                         <label class="form-check-label" for="memory-cleaner">
                                             Memory cleaner
                                         </label>
                                     </div>
-                                </div>
+                                </div> -->
 								<div class="col-lg-6 col-md-6 pb-lg-1">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" v-model="config.system.tunnel.auto_recon" :disabled="status === true" id="auto_recon">
@@ -91,6 +91,14 @@
                                         </label>
                                     </div>
                                 </div>
+                                <!-- <div class="col-lg-6 col-md-6 pb-lg-1">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" v-model="config.system.tunnel.ping_loop" :disabled="status === true" id="ping-loop">
+                                        <label class="form-check-label" for="ping-loop">
+                                            Ping Loop
+                                        </label>
+                                    </div>
+                                </div> -->
                                 <div class="col-lg-6 col-md-6">
 									<i class="fa fa-inbox"></i>
                                     <span class="text-primary">Status: </span><span :class="{ 'text-primary': connection === 0, 'text-warning': connection === 1, 'text-success': connection === 2, 'text-info': connection === 3 }">{{ connectionText }}</span>
