@@ -25,7 +25,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	LuCI version of Libernet, but with some mods and additions.
+	LuCI version of Libernet, but with some mods ssh only and additions.
 endef
 
 define Package/$(PKG_NAME)/install
