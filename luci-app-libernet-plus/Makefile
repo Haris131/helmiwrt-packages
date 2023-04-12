@@ -44,8 +44,6 @@ endef
 
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
-	[ -d /tmp/luci-modulecache ] rm -rf /tmp/luci-modulecache
-	find /tmp -type f -name 'luci-indexcache.*' -exec rm -f {};
 	chmod -R 755 /usr/lib/lua/luci/controller/*
 	chmod -R 755 /usr/lib/lua/luci/view/*
 	chmod -R 755 /www/*
@@ -85,7 +83,6 @@ define Package/$(PKG_NAME)/postinst
 		echo -e "Restarting network service"
 		/etc/init.d/network restart
     fi
-	[ -d /usr/lib/php7 ] [ ! -d /usr/lib/php ] ln -sf /usr/lib/php7 /usr/lib/php
 exit 0
 endef
 
