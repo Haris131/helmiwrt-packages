@@ -25,9 +25,6 @@ on:
 
 env:
   REPO_URL: https://github.com/Haris131/Actions-OpenWrt/trunk/${{ github.event.inputs.branch }}
-  FEEDS_CONF: feeds.conf.default
-  DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: diy-part2.sh
   UPLOAD_SDK_DIR: true
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
@@ -64,10 +61,10 @@ jobs:
 
     - name: Load custom feeds
       run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH
+        wget https://raw.githubusercontent.com/Haris131/Actions-OpenWrt/main/diy-part1.sh -O diy-part1.sh
+        chmod +x diy-part1.sh
         cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P1_SH
+        $GITHUB_WORKSPACE/diy-part1.sh
 
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
@@ -79,9 +76,10 @@ jobs:
       run: |
         [ -e files ] && mv files openwrt/files
         wget https://raw.githubusercontent.com/Haris131/Actions-OpenWrt/main/.config_a53 -O openwrt/.config
-        chmod +x $DIY_P2_SH
+        wget https://raw.githubusercontent.com/Haris131/Actions-OpenWrt/main/diy-part2.sh -O diy-part2.sh
+        chmod +x diy-part2.sh
         cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P2_SH
+        $GITHUB_WORKSPACE/diy-part2.sh
 
     - name: Download package
       id: package
