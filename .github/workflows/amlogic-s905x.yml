@@ -95,7 +95,7 @@ jobs:
       if: env.UPLOAD_SDK_DIR == 'true'
       with:
         name: OpenWrt_sdk${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: openwrt
+        path: $GITHUB_WORKSPACE/openwrt
 
     - name: Compile the firmware
       id: compile
@@ -123,13 +123,13 @@ jobs:
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
         name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: openwrt/bin
+        path: $GITHUB_WORKSPACE/openwrt/bin
 
     - name: Organize files
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
-        cd openwrt/bin/targets/*/*
+        cd $GITHUB_WORKSPACE/openwrt/bin/targets/*/*
         rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=status::success"
