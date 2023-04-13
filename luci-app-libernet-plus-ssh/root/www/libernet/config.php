@@ -143,7 +143,7 @@
                                 <div class="form-row">
                                     <div class="col-md-6">
                                         <label>SNI</label>
-                                        <input type="text" class="form-control" placeholder="www.bug.com" v-model.number="config.temp.modes[1].profile.sni" required>
+                                        <input type="text" class="form-control" placeholder="www.bug.com" v-model="config.temp.modes[1].profile.sni" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label>UDPGW Port</label>
