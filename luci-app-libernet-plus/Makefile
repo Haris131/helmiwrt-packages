@@ -82,7 +82,7 @@ define Package/$(PKG_NAME)/postinst
 		uci commit
 		echo -e "Restarting network service"
 		/etc/init.d/network restart
-    fi
+	fi
 exit 0
 endef
 
