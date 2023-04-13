@@ -22,15 +22,10 @@ on:
         options:
           - openwrt-21.02.5
           - immortalwrt-21.02.5
-      config:
-        description: "Set the path .config"
-        required: true
-        default: ".config_s905x"
 
 env:
   REPO_URL: https://github.com/Haris131/Actions-OpenWrt/trunk/${{ github.event.inputs.branch }}
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: ${{ github.event.inputs.config }}
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   UPLOAD_SDK_DIR: true
@@ -83,7 +78,7 @@ jobs:
     - name: Load custom configuration
       run: |
         [ -e files ] && mv files openwrt/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        wget https://raw.githubusercontent.com/Haris131/Actions-OpenWrt/main/.config_a53 -O openwrt/.config
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
