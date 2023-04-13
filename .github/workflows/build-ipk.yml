@@ -111,6 +111,8 @@ jobs:
           cd $OPENWRT_ROOT_PATH
           ./scripts/feeds update -a
           ./scripts/feeds install -a
+          make tools/install
+          make toolchain/install
           echo "status=success" >> $GITHUB_OUTPUT
 
       - name: Compile Packages
