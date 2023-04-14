@@ -17,24 +17,67 @@ on:
         required: true
         default: 21.02.5
         options:  
+        - 18.06.0
+        - 18.06.0-rc1
+        - 18.06.0-rc2
+        - 18.06.1
+        - 18.06.2
+        - 18.06.3
+        - 18.06.4
+        - 18.06.5
+        - 18.06.6
+        - 18.06.7
+        - 18.06.8
         - 18.06.9
+        - 21.02.0
+        - 21.02.0-rc1
+        - 21.02.0-rc2
+        - 21.02.0-rc3
+        - 21.02.0-rc4
+        - 21.02.1
+        - 21.02.2
+        - 21.02.3
+        - 21.02.4
         - 21.02.5
+        - 22.03.0
+        - 22.03.0-rc1
+        - 22.03.0-rc4
+        - 22.03.0-rc5
+        - 22.03.0-rc6
+        - 22.03.1
+        - 22.03.2
         - 22.03.3
         - snapshot
       platform:
         type: choice
         description: Select device platform.
         required: true
-        default: armvirt/64
+        default: bcm27xx/bcm2711
         options: 
         - armvirt/32
         - armvirt/64
+        - bcm27xx/bcm2708
+        - bcm27xx/bcm2709
+        - bcm27xx/bcm2710
+        - bcm27xx/bcm2711
+#        - ramips/mt7620
+#        - ramips/mt7621
+#        - ramips/mt76x8
+#        - ramips/rt288x
+#        - ramips/rt305x
+#        - ramips/rt3883
+        - rockchip/armv8
         - sunxi/cortexa53
+        - sunxi/cortexa7
+#        - sunxi/cortexa8
         - x86/64
         - x86/generic
+#        - x86/geode
+#        - x86/legacy
 
 env:
   CONFIG_FILE: build-ipk/universal.config
+  UPLOAD_RELEASE: true
   TZ: Asia/Jakarta
   REPO_URL: https://github.com/immortalwrt/immortalwrt
   DIY_SH: build-ipk/immortalwrt.sh
@@ -111,8 +154,6 @@ jobs:
           cd $OPENWRT_ROOT_PATH
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-          make tools/install
-          make toolchain/install
           echo "status=success" >> $GITHUB_OUTPUT
 
       - name: Compile Packages
@@ -125,16 +166,39 @@ jobs:
           echo -e "===== List of Apps ====="
           cat $BUILD_CONFIG
           echo -e "===== List of Apps ====="    
-          make defconfig
+          make defconfig   
           while IFS= read -r line # Read a line
           do
             make package/${line}/compile -j${nproc} V=w
+            find bin/ -type f -name '*${line}*' -exec mv -t ../ipkg {} +
           done < "$BUILD_CONFIG"
           echo "status=success" >> $GITHUB_OUTPUT
 
-      - name: Upload bin directory
-        uses: actions/upload-artifact@main
-        if: steps.organize.outputs.status == 'success'
+      - name: Generate New Release Tag
+        id: tag
+        if: steps.organize.outputs.status == 'success' && !cancelled()
+        run: |
+          sleep 10
+          echo "release_tag=ipk" >> $GITHUB_OUTPUT
+          touch release.txt
+          echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Upload HelmiWrt Packages to GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: steps.tag.outputs.status == 'success' && !cancelled()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: OpenWrt_bin
-          path: $OPENWRT_ROOT_PATH/bin
+          prerelease: false
+          name: IPK Build ${{ env.FILE_DATE }}
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          files: |
+            # ${{ env.LUCITHEMEPATH }}-*
+            # ${{ env.LUCIAPPPATH }}-*
+            # ${{ env.PKGPATH }}/mactoiface.*
+            ${{ env.paketHelmiWrt }}/*
+          body: |
+            **HelmiWrt LuCI App and Theme IPK for OpenWrt**
+            THESE PACKAGES IS COOLSNOWWOLF LEDE FIRMWARE BASED !!!!! NOT OFFICIAL OPENWRT BASE !!!!
+            DWYOR (DO WITH YOUR OWN RISK)
+            [Donation here](https://www.helmiau.com/pay) • [Installation Tutorial](https://www.google.com/search?q=helmiau.com+helmiwrt+packages)
