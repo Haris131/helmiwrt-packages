@@ -9,6 +9,7 @@
 sed -i '$a src-git small https://github.com/kenzok8/small' feeds.conf.default
 
 # Clone community packages to package
+mkdir -p package/community
 pushd package/community
 
 # HelmiWrt packages
