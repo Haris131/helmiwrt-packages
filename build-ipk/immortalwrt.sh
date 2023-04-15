@@ -15,8 +15,6 @@ pushd package/community
 # HelmiWrt packages
 git clone --depth=1 https://github.com/Haris131/helmiwrt-packages
 
-git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall
-
 # Out to openwrt dir
 popd
 
