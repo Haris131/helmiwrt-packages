@@ -19,7 +19,6 @@ on:
         options:
         - 21.02.6
         - 22.03.4
-        - snapshot
       platform:
         type: choice
         description: Select device platform.
@@ -61,11 +60,7 @@ jobs:
           echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
           export PLATFORM_SUB=$(echo "$PLATFORM" | sed 's|\/|\-|g')
           echo "PLATFORM_SUB=$PLATFORM_SUB" >> $GITHUB_ENV
-          if [[ "$REPO_BRANCH" == "snapshot" ]];then
-            export BRANCH_REL="snapshot"
-          else
-            export BRANCH_REL=$(echo "releases/$REPO_BRANCH")
-          fi
+          export BRANCH_REL=$(echo "releases/$REPO_BRANCH")
           echo "BRANCH_REL=$BRANCH_REL" >> $GITHUB_ENV
           export BUILD_CONFIG="$GITHUB_WORKSPACE/$CONFIG_FILE"
           echo "BUILD_CONFIG=$BUILD_CONFIG" >> $GITHUB_ENV
