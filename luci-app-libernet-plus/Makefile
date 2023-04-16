@@ -15,7 +15,6 @@ LUCI_DEPENDS:=+coreutils +coreutils-stdbuf +jq +ip-full +kmod-tun +openssh-clien
 	+badvpn +corkscrew +simple-obfs +sshpass +trojan-go +v2ray-core \
 	+bash +curl +librt +libpthread +screen +shadowsocks-libev-ss-local +openvpn-openssl
 
-
 PKG_NAME:=luci-app-libernet-plus
 PKG_VERSION:=2.1
 PKG_RELEASE:=2
