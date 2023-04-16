@@ -15,9 +15,8 @@ on:
         type: choice
         description: Select OpenWrt Branch.
         required: true
-        default: 21.02.5
+        default: 21.02.6
         options:
-        - 18.06.9
         - 21.02.6
         - 22.03.4
         - snapshot
