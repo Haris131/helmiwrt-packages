@@ -34,7 +34,6 @@ env:
   CONFIG_FILE: build-ipk/universal.config
   UPLOAD_RELEASE: true
   TZ: Asia/Jakarta
-  REPO_URL: https://github.com/immortalwrt/immortalwrt
   DIY_SH: build-ipk/immortalwrt.sh
 
 jobs:
@@ -111,7 +110,6 @@ jobs:
         id: compile
         if: steps.install_feeds.outputs.status == 'success' && !cancelled()
         run: |
-          [[ ! -d ipkg ]] && mkdir -p ipkg
           cd $OPENWRT_ROOT_PATH
           sed -i -e '/^#/d' -i -e '/^[[:blank:]]*$/ d' "${BUILD_CONFIG}"
           echo -e "===== List of Apps ====="
@@ -121,9 +119,15 @@ jobs:
           while IFS= read -r line # Read a line
           do
             make package/${line}/compile -j${nproc} V=w
-            find bin/ -type f -name '*${line}*' -exec mv -t ../ipkg {} +
           done < "$BUILD_CONFIG"
           echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Upload bin directory
+        uses: actions/upload-artifact@main
+        if: steps.compile.outputs.status == 'success' && !cancelled()
+        with:
+          name: OpenWrt_bin${{ env.PLATFORM }}${{ env.FILE_DATE }}
+          path: $OPENWRT_ROOT_PATH/bin
 
       - name: Generate New Release Tag
         id: tag
