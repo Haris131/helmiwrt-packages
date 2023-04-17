@@ -129,6 +129,27 @@ jobs:
           name: OpenWrt_bin${{ env.PLATFORM }}${{ env.FILE_DATE }}
           path: openwrt/bin
 
+      - name: Organize Firmware
+        id: organize
+        if: steps.compile.outputs.status == 'success' || steps.compile_pkg.outputs.status == 'success' && !cancelled()
+        run: |
+          cd $GITHUB_WORKSPACE/openwrt/bin/packages
+          # Delete Firewall IPK
+          find . -type f -name 'luci-app-firewall*' | while read FILE; do
+            rm -f ${FILE};
+          done
+          # Checking all IPK's location
+          find . -type f -name 'luci-app-*' | while read FILE; do
+            echo -e "luci app and theme located at $(readlink -f ${FILE})";
+          done
+          # Set LuCI Theme and App Path
+          echo "LUCITHEMEPATH=$GITHUB_WORKSPACE/openwrt/bin/packages/*/base/luci-theme" >> $GITHUB_ENV
+          echo "LUCIAPPPATH=$GITHUB_WORKSPACE/openwrt/bin/packages/*/base/luci-app" >> $GITHUB_ENV
+          echo "PKGPATH=$GITHUB_WORKSPACE/openwrt/bin/packages/*/base/packages" >> $GITHUB_ENV
+          # Checking Files and places
+          echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+          echo "status=success" >> $GITHUB_OUTPUT
+
       - name: Generate New Release Tag
         id: tag
         if: steps.organize.outputs.status == 'success' && !cancelled()
@@ -147,7 +168,10 @@ jobs:
           prerelease: false
           name: IPK Build ${{ env.FILE_DATE }}
           tag_name: ${{ steps.tag.outputs.release_tag }}
-          files: ${{ env.paketHelmiWrt }}/*
+          files: |
+            ${{ env.LUCITHEMEPATH }}-*
+            ${{ env.LUCIAPPPATH }}-*
+            ${{ env.PKGPATH }}/mactoiface*
           body: |
             **HelmiWrt LuCI App and Theme IPK for OpenWrt**
             THESE PACKAGES IS COOLSNOWWOLF LEDE FIRMWARE BASED !!!!! NOT OFFICIAL OPENWRT BASE !!!!
