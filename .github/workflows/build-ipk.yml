@@ -114,12 +114,15 @@ jobs:
           sed -i -e '/^#/d' -i -e '/^[[:blank:]]*$/ d' "${BUILD_CONFIG}"
           echo -e "===== List of Apps ====="
           cat $BUILD_CONFIG
-          echo -e "===== List of Apps ====="    
+          echo -e "===== List of Apps ====="
+          mkdir -p ipkg
           make defconfig
           while IFS= read -r line # Read a line
           do
             make package/${line}/compile -j${nproc} V=w
+            find bin/ -type f -name '*${line}*' -exec mv -t ipkg {} +
           done < "$BUILD_CONFIG"
+          echo "PKGPATH=$OPENWRT_ROOT_PATH/openwrt/ipkg" >> $GITHUB_ENV
           echo "status=success" >> $GITHUB_OUTPUT
 
       - name: Upload bin directory
@@ -127,28 +130,11 @@ jobs:
         if: steps.compile.outputs.status == 'success' && !cancelled()
         with:
           name: OpenWrt_bin_${{ env.PLATFORM }}
-          path: /workdir/openwrt/bin
-
-      - name: Organize Firmware
-        id: organize
-        if: steps.compile.outputs.status == 'success' && !cancelled()
-        run: |
-          cd $OPENWRT_ROOT_PATH
-          [[ ! -d ipkg ]] && mkdir -p ipkg
-          # Move IPK's location
-          while IFS= read -r line # Read a line
-          do
-            find bin/ -type f -name '*${line}*' -exec mv -t ipkg {} +
-          done < "$BUILD_CONFIG"
-          # Set IPK Path
-          echo "PKGPATH=$GITHUB_WORKSPACE/openwrt/ipkg" >> $GITHUB_ENV
-          # Checking Files and places
-          echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-          echo "status=success" >> $GITHUB_OUTPUT
+          path: openwrt/bin
 
       - name: Generate New Release Tag
         id: tag
-        if: steps.organize.outputs.status == 'success' && !cancelled()
+        if: steps.compile.outputs.status == 'success' && !cancelled()
         run: |
           sleep 10
           echo "release_tag=ipk" >> $GITHUB_OUTPUT
