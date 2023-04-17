@@ -14,6 +14,7 @@ pushd package/community
 
 # HelmiWrt packages
 git clone --depth=1 https://github.com/Haris131/helmiwrt-packages
+rm -rf helmiwrt-packages/luci-app-libernet-ssh
 
 # Out to openwrt dir
 popd
