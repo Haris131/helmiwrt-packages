@@ -122,6 +122,8 @@ jobs:
             make package/${line}/compile -j${nproc} V=w
             find bin/ -type f -name '*${line}*' -exec mv -t ipkg {} +
           done < "$BUILD_CONFIG"
+          ls ipkg
+          ls ipkg/*
           echo "PKGPATH=$OPENWRT_ROOT_PATH/openwrt/ipkg" >> $GITHUB_ENV
           echo "status=success" >> $GITHUB_OUTPUT
 
@@ -129,7 +131,7 @@ jobs:
         uses: actions/upload-artifact@main
         if: steps.compile.outputs.status == 'success' && !cancelled()
         with:
-          name: OpenWrt_bin_${{ env.PLATFORM }}
+          name: OpenWrt_bin
           path: openwrt/bin
 
       - name: Generate New Release Tag
