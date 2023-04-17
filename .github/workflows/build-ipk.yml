@@ -127,13 +127,13 @@ jobs:
         if: steps.compile.outputs.status == 'success' && !cancelled()
         with:
           name: OpenWrt_bin_${{ env.PLATFORM }}
-          path: $GITHUB_WORKSPACE/openwrt/bin
+          path: /workdir/openwrt/bin
 
       - name: Organize Firmware
         id: organize
         if: steps.compile.outputs.status == 'success' && !cancelled()
         run: |
-          cd $GITHUB_WORKSPACE/openwrt
+          cd $OPENWRT_ROOT_PATH
           [[ ! -d ipkg ]] && mkdir -p ipkg
           # Move IPK's location
           while IFS= read -r line # Read a line
