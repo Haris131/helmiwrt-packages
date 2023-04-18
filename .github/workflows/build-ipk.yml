@@ -115,7 +115,7 @@ jobs:
           echo -e "===== List of Apps ====="
           cat $BUILD_CONFIG
           echo -e "===== List of Apps ====="
-          mkdir -p ipkg
+          sudo mkdir -p ipkg
           make defconfig
           while IFS= read -r line # Read a line
           do
