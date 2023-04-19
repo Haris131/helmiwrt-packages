@@ -150,9 +150,9 @@ jobs:
           name: IPK Build ${{ env.FILE_DATE }}
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: |
-            ${{ env.LUCITHEMEPATH }}-*
+            # ${{ env.LUCITHEMEPATH }}-*
             ${{ env.LUCIAPPPATH }}-*
-            ${{ env.PKGPATH }}/mactoiface*
+            # ${{ env.PKGPATH }}/mactoiface*
           body: |
             **HelmiWrt LuCI App and Theme IPK for OpenWrt**
             THESE PACKAGES IS COOLSNOWWOLF LEDE FIRMWARE BASED !!!!! NOT OFFICIAL OPENWRT BASE !!!!
