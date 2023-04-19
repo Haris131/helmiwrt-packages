@@ -119,9 +119,7 @@ jobs:
           do
             make package/${line}/compile -j${nproc} V=w
           done < "$BUILD_CONFIG"
-          echo "LUCITHEMEPATH=$GITHUB_WORKSPACE/openwrt/bin/packages/*/base/luci-theme" >> $GITHUB_ENV
           echo "LUCIAPPPATH=$GITHUB_WORKSPACE/openwrt/bin/packages/*/base/luci-app" >> $GITHUB_ENV
-          echo "PKGPATH=$GITHUB_WORKSPACE/openwrt/bin/packages/*/base/packages" >> $GITHUB_ENV
           echo "status=success" >> $GITHUB_OUTPUT
 
       - name: Upload bin directory
@@ -149,10 +147,7 @@ jobs:
           prerelease: false
           name: IPK Build ${{ env.FILE_DATE }}
           tag_name: ${{ steps.tag.outputs.release_tag }}
-          files: |
-            # ${{ env.LUCITHEMEPATH }}-*
-            ${{ env.LUCIAPPPATH }}-*
-            # ${{ env.PKGPATH }}/mactoiface*
+          files: ${{ env.LUCIAPPPATH }}-*
           body: |
             **HelmiWrt LuCI App and Theme IPK for OpenWrt**
             THESE PACKAGES IS COOLSNOWWOLF LEDE FIRMWARE BASED !!!!! NOT OFFICIAL OPENWRT BASE !!!!
