@@ -8,13 +8,13 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI Libernet Plus App
+LUCI_TITLE:=LuCI Libernet Plus Simple App
 LUCI_PKGARCH:=all
 LUCI_DEPENDS:=+coreutils +coreutils-stdbuf +jq +ip-full +kmod-tun +openssh-client \
 	+php8 +php8-cgi +php8-mod-json +php8-mod-session +python3 +httping +stunnel +stubby \
 	+badvpn +corkscrew +sshpass +bash +curl +librt +libpthread +screen +openvpn-openssl
 
-PKG_NAME:=luci-app-libernet-plus
+PKG_NAME:=luci-app-libernet-plus-simple
 PKG_VERSION:=2.1
 PKG_RELEASE:=2
 
@@ -25,7 +25,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	LuCI version of Libernet, but with some mods and additions.
+	LuCI version of Libernet, but with some mods simple and additions.
 endef
 
 define Package/$(PKG_NAME)/install
