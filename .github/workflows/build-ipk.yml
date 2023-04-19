@@ -24,7 +24,7 @@ on:
         description: Select device platform.
         required: true
         default: armvirt/64
-        options: 
+        options:
         - armvirt/64
         - sunxi/cortexa53
         - x86/64
@@ -119,7 +119,7 @@ jobs:
           do
             make package/${line}/compile -j${nproc} V=w
           done < "$BUILD_CONFIG"
-          echo "LUCIAPPPATH=$GITHUB_WORKSPACE/openwrt/bin/packages/*/base/luci-app" >> $GITHUB_ENV
+          echo "LUCIAPPPATH=$PWD/bin/packages/*/base/luci-app" >> $GITHUB_ENV
           echo "status=success" >> $GITHUB_OUTPUT
 
       - name: Upload bin directory

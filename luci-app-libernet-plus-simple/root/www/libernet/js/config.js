@@ -122,7 +122,7 @@ const app = new Vue({
     },
     computed: {
         openvpn_auth_user_pass() {
-            return this.config.temp.modes[5].profile.ovpn.includes("auth-user-pass")
+            return this.config.temp.modes[2].profile.ovpn.includes("auth-user-pass")
         },
         sortedModes() {
             const modes = [...this.config.temp.modes];
@@ -310,19 +310,19 @@ const app = new Vue({
                     title = "SSH config has been saved"
                     break
                 case 1:
-                    config = this.config.temp.modes[2].profile
+                    config = this.config.temp.modes[1].profile
                     title = "SSH-SSL config has been saved"
                     break
                 case 2:
-                    config = this.config.temp.modes[5].profile
+                    config = this.config.temp.modes[2].profile
                     title = "OpenVPN config has been saved"
                     break
                 case 3:
-                    config = this.config.temp.modes[6].profile
+                    config = this.config.temp.modes[3].profile
                     title = "SSH-WS-CDN config has been saved"
                     break
                 case 4:
-                    config = this.config.temp.modes[7].profile
+                    config = this.config.temp.modes[4].profile
                     title = "SSH-SlowDNS config has been saved"
                     break
             }
@@ -353,7 +353,7 @@ const app = new Vue({
             reader.readAsText(file)
             reader.onload = e => {
                 this.$emit("load", e.target.result)
-                this.config.temp.modes[5].profile.ovpn = e.target.result
+                this.config.temp.modes[2].profile.ovpn = e.target.result
             }
         },
         resolveServerHost: _.debounce(function () {

@@ -10,9 +10,10 @@ include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI Libernet Plus App
 LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+coreutils +coreutils-stdbuf +jq +ip-full +kmod-tun +openssh-client \
-	+php8 +php8-cgi +php8-mod-json +php8-mod-session +python3 +httping +stunnel +stubby \
-	+badvpn +corkscrew +sshpass +bash +curl +librt +libpthread +screen +openvpn-openssl
+LUCI_DEPENDS:=coreutils +coreutils-stdbuf +jq +ip-full +kmod-tun +openssh-client \
+	+php8 +php8-cgi +php8-mod-session +python3 +httping +stunnel +stubby \
+	+badvpn +corkscrew +simple-obfs +sshpass +trojan-go +v2ray-core \
+	+bash +curl +librt +libpthread +screen +shadowsocks-libev-ss-local +openvpn-openssl
 
 PKG_NAME:=luci-app-libernet-plus
 PKG_VERSION:=2.1

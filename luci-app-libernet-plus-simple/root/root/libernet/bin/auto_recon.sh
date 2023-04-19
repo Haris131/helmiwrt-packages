@@ -76,19 +76,19 @@ function start_services() {
   # write to service log
   case "${TUNNEL_MODE}" in
     "0")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH"
+      "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH"
       "${LIBERNET_DIR}/bin/ssh.sh" -r
       ;;
     "1")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH-SSL"
+      "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH-SSL"
       "${LIBERNET_DIR}/bin/ssh-ssl.sh" -r
       ;;
-	"2")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart openvpn"
+    "2")
+      "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart openvpn"
       "${LIBERNET_DIR}/bin/openvpn.sh" -r
       ;;
-	"3")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-ws-cdn"
+    "3")
+      "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-ws-cdn"
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -r
       ;;
     "4")
@@ -114,7 +114,7 @@ function stop_services() {
     "2")
       "${LIBERNET_DIR}/bin/openvpn.sh" -s
       ;;
-	"3")
+    "3")
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -s
       ;;
      "4")

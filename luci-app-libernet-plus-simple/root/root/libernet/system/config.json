@@ -4,15 +4,16 @@
         "dns_resolver": false,
         "ping_loop": false,
         "auto_recon": true,
-        "mode": 2,
+        "mode": 0,
         "profile": {
-            "ssh": "akrab",
+            "ssh": "",
+	    "ssh_ssl": "",
             "openvpn": "",
-            "ssh_ws_cdn": "akrab2",
-            "ssh_slowdns": "id_19go"
+            "ssh_ws_cdn": "",
+            "ssh_slowdns": ""
         }
     },
-    "server": "103.227.252.230",
+    "server": "",
     "cdn_server": "",
     "dns_servers": [],
     "proxy_servers": [],
