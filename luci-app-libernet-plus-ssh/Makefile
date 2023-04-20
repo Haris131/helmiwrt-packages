@@ -50,6 +50,10 @@ define Package/$(PKG_NAME)/postinst
 	chmod -R 755 /root/libernet/bin/*
 	chmod -R 755 /usr/bin/hsize
 	chmod -R 755 /usr/bin/dnstt-client
+	if ! grep -q LIBERNET_DIR /etc/profile; then
+		echo -e "Adding Libernet environment" \
+		&& echo -e "\n# Libernet\nexport LIBERNET_DIR=/root/libernet" | tee -a '/etc/profile'
+	fi
 	# Autofix download index.php, index.html
 	if ! grep -q ".php=/usr/bin/php-cgi" /etc/config/uhttpd; then
 		echo -e "Enabling uhttp php execution"
