@@ -53,7 +53,11 @@ while [ 1 ]; do
   if [ $log_file -gt 50 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -r
   fi
-  if [ $n -gt 4 ]; then
+  if [ -f $(grep -c "Connection closed" ${LIBERNET_DIR}/log/screenlog.0) ]; then
+    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: green\">Auto Reconnecting</span>"
+    n=0
+    recon
+  elif [ $n -gt 4 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: green\">Auto Reconnecting</span>"
     n=0
     recon
