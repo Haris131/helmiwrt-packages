@@ -14,9 +14,9 @@ pushd package/community
 git clone --depth=1 https://github.com/Haris131/helmiwrt-packages
 
 # kenzo8 small packages
-svn co https://github.com/kenzok8/small/trunk/trojan-go
-svn co https://github.com/kenzok8/small/trunk/simple-obfs
-svn co https://github.com/kenzok8/small/trunk/v2ray-core
+#svn co https://github.com/kenzok8/small/trunk/trojan-go
+#svn co https://github.com/kenzok8/small/trunk/simple-obfs
+#svn co https://github.com/kenzok8/small/trunk/v2ray-core
 
 # Out to openwrt dir
 popd
