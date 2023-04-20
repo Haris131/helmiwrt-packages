@@ -11,12 +11,21 @@ name: Build IPK
 on:
   workflow_dispatch:
     inputs:
+      source:
+        type: choice
+        description: Select OpenWrt Source.
+        required: true
+        default: openwrt
+        options:
+        - openwrt
+        - immortalwrt
       branch:
         type: choice
         description: Select OpenWrt Branch.
         required: true
         default: 21.02.6
         options:
+        - 21.02.5
         - 21.02.6
         - 22.03.4
       platform:
@@ -53,6 +62,8 @@ jobs:
           sudo chown $USER:$GROUPS /workdir
           export FILE_DATE=$(date +"%Y.%m.%d")
           echo "FILE_DATE=$FILE_DATE" >> $GITHUB_ENV
+          export SOURCE_WRT=$(echo "${{ github.event.inputs.source }}")
+          echo "SOURCE_WRT=$SOURCE_WRT" >> $GITHUB_ENV
           export REPO_BRANCH=$(echo "${{ github.event.inputs.branch }}")
           echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
           export PLATFORM=$(echo "${{ github.event.inputs.platform }}")
@@ -69,7 +80,7 @@ jobs:
         working-directory: /workdir
         run: |
           df -hT $PWD
-          export REPO_SDK=$(echo "https://downloads.openwrt.org/${BRANCH_REL}/targets/${PLATFORM}/openwrt-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-8.4.0_musl.Linux-x86_64.tar.xz")
+          export REPO_SDK=$(echo "https://downloads.${SOURCE_WRT}.org/${BRANCH_REL}/targets/${PLATFORM}/openwrt-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-8.4.0_musl.Linux-x86_64.tar.xz")
           echo "REPO_SDK=${REPO_SDK}" >> $GITHUB_ENV
           echo "sdk url:: ${REPO_SDK}"
           wget ${REPO_SDK}
