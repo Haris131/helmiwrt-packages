@@ -117,7 +117,7 @@ jobs:
           make defconfig
           while IFS= read -r line # Read a line
           do
-            make -r package/${line}/compile -j${nproc} V=w
+            make package/${line}/compile -j${nproc} V=w
           done < "$BUILD_CONFIG"
           echo "LUCIAPPPATH=$PWD/bin/packages/*/base/luci-app" >> $GITHUB_ENV
           echo "status=success" >> $GITHUB_OUTPUT
