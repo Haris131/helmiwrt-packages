@@ -80,7 +80,7 @@ function start_services() {
       "${LIBERNET_DIR}/bin/ssh-ssl.sh" -r
       ;;
     "2")
-	  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-ws-cdn"
+      "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-ws-cdn"
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -r
       ;;
     "3")
