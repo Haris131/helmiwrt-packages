@@ -80,7 +80,7 @@ jobs:
         working-directory: /workdir
         run: |
           df -hT $PWD
-          export REPO_SDK=$(echo "https://downloads.${SOURCE_WRT}.org/${BRANCH_REL}/targets/${PLATFORM}/openwrt-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-8.4.0_musl.Linux-x86_64.tar.xz")
+          export REPO_SDK=$(echo "https://downloads.${SOURCE_WRT}.org/${BRANCH_REL}/targets/${PLATFORM}/${SOURCE_WRT}-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-8.4.0_musl.Linux-x86_64.tar.xz")
           echo "REPO_SDK=${REPO_SDK}" >> $GITHUB_ENV
           echo "sdk url:: ${REPO_SDK}"
           wget ${REPO_SDK}
@@ -130,7 +130,7 @@ jobs:
           do
             make package/${line}/compile -j${nproc} V=w
           done < "$BUILD_CONFIG"
-          echo "LUCIAPPPATH=$PWD/bin/packages/*/base/luci-app" >> $GITHUB_ENV
+          echo "LUCIAPPPATH=$OPENWRT_ROOT_PATH/bin/packages/*/base/luci-app" >> $GITHUB_ENV
           echo "status=success" >> $GITHUB_OUTPUT
 
       - name: Upload bin directory
