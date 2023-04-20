@@ -86,7 +86,7 @@ jobs:
           wget ${REPO_SDK}
           tar xf *.tar.xz
           rm -f *.tar.xz
-          mv openwrt-* /workdir/openwrt
+          mv ${SOURCE_WRT}-* /workdir/openwrt
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
           export OPENWRT_ROOT_PATH="$GITHUB_WORKSPACE/openwrt"
           echo "OPENWRT_ROOT_PATH=$OPENWRT_ROOT_PATH" >> $GITHUB_ENV
