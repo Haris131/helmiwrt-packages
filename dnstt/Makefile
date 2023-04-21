@@ -7,26 +7,22 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnstt
-PKG_VERSION:=0.20210424.0
+PKG_VERSION:=1.20220208.0
 PKG_RELEASE:=$(AUTORELEASE)
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/Mygod/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=75e7851d808fd1d3d2d80ff2d5dac7667d6a086e513c5243ca751f2e3d487a72
-
-PKG_LICENSE:=GPL-3.0-only
-PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
+PKG_SOURCE:=v$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://codeload.github.com/Haris131/dnstt/tar.gz/v$(PKG_VERSION)?
+PKG_HASH:=95e82ba913ce0c5bc68b658f9c4d9b3dd8059190bb0a8b6acba2ff601b5bb237
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-GO_PKG:=github.com/Mygod/dnstt/dnstt-client
+GO_PKG:=github.com/Haris131/dnstt
 GO_PKG_BUILD_PKG:=$(GO_PKG)
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/constant.Version=$(PKG_VERSION) \
-	$(GO_PKG)/constant.Commit=v$(PKG_VERSION)
+	$(GO_PKG)/dnstt-client/constant.Version=$(PKG_VERSION) \
+	$(GO_PKG)/dnstt-client/constant.Commit=v$(PKG_VERSION)
 GO_PKG_TAGS:=full
 
 include $(INCLUDE_DIR)/package.mk
