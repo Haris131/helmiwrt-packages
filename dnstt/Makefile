@@ -1,4 +1,4 @@
-Q# Copyright (C) 2009 Mygod
+# Copyright (C) 2009 Mygod
 #
 # This is free software, licensed under the GNU General Public License v2.
 # Updated & patched for OpenWrt by Chewy Mage <Haris131>
