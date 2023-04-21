@@ -1,4 +1,4 @@
-# Copyright (C) 2009 Mygod
+Q# Copyright (C) 2009 Mygod
 #
 # This is free software, licensed under the GNU General Public License v2.
 # Updated & patched for OpenWrt by Chewy Mage <Haris131>
@@ -18,7 +18,7 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-GO_PKG:=github.com/Haris131/dnstt
+GO_PKG:=github.com/Haris131/dnstt/dnstt-client
 GO_PKG_BUILD_PKG:=$(GO_PKG)
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/dnstt-client/constant.Version=$(PKG_VERSION) \
