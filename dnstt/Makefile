@@ -18,7 +18,7 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-GO_PKG:=github.com/Haris131/dnstt/dnstt-client
+GO_PKG:=github.com/Haris131/dnstt
 GO_PKG_BUILD_PKG:=$(GO_PKG)
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/dnstt-client/constant.Version=$(PKG_VERSION) \
@@ -33,7 +33,7 @@ define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
 	SUBMENU:=Web Servers/Proxies
-	DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+	DEPENDS:=$(GO_ARCH_DEPENDS)
 	URL:=https://www.bamsoftware.com/software/dnstt/
 endef
 
