@@ -20,7 +20,6 @@ PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/Haris131/dnstt
 GO_PKG_BUILD_PKG:=$(GO_PKG)/dnstt-client
-GO_PKG_LDFLAGS_X:=main.appVersion=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -44,7 +43,7 @@ define Package/$(PKG_NAME)/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 
 	$(INSTALL_DIR) $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/cmd $(1)/usr/bin/hysteria
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/dnstt-client $(1)/usr/bin/dnstt-client
 endef
 
 $(eval $(call GoBinPackage,$(PKG_NAME)))
