@@ -12,7 +12,7 @@ PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/Haris131/dnstt/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=b85c8deee0f446477a3fe0e60a7fec85d28ae9246583dabb84acc6afe5ce8ba3
+PKG_HASH:=7caf382f5fb4dd5f6452f07f8a7ea17f6b872c0a1851e8ab7fc85a587fab51a9
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
