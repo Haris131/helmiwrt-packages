@@ -26,10 +26,7 @@ include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/$(PKG_NAME)
 	TITLE:=dnstt is an application-layer tunnel that runs in userspace.
-	SECTION:=net
-	CATEGORY:=Network
-	SUBMENU:=Web Servers/Proxies
-	DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+	DEPENDS:=$(GO_ARCH_DEPENDS)
 	URL:=https://www.bamsoftware.com/software/dnstt/
 endef
 

@@ -26,9 +26,6 @@ include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/$(PKG_NAME)
 	TITLE:=Command line tool for human readable size
-	SECTION:=net
-	CATEGORY:=Network
-	SUBMENU:=Web Servers/Proxies
 	DEPENDS:=$(GO_ARCH_DEPENDS)
 	URL:=https://github.com/gonejack/hsize
 endef
