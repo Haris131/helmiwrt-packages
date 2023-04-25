@@ -162,7 +162,7 @@ jobs:
           files: |
             ${{ env.LUCIAPPPATH }}-*
             ${{ env.PKGPATH }}hsize*
-            ${{ env.PKGPATH }}dnstt-client*
+            ${{ env.PKGPATH }}dnstt*
           body: |
             **HelmiWrt LuCI App and Theme IPK for OpenWrt**
             THESE PACKAGES IS COOLSNOWWOLF LEDE FIRMWARE BASED !!!!! NOT OFFICIAL OPENWRT BASE !!!!
