@@ -11,8 +11,8 @@ include $(TOPDIR)/rules.mk
 LUCI_TITLE:=LuCI Libernet Plus App
 LUCI_PKGARCH:=all
 LUCI_DEPENDS:=coreutils +coreutils-stdbuf +jq +ip-full +kmod-tun +openssh-client \
-	+php8 +php8-cgi +php8-mod-session +python3 +httping +stunnel +stubby \
-	+badvpn +corkscrew +simple-obfs +sshpass +trojan-go +v2ray-core \
+	+php8 +php8-cgi +php8-mod-session +python3 +httping +stunnel +stubby dnstt \
+	+badvpn +corkscrew +simple-obfs +sshpass +trojan-go +v2ray-core hsize \
 	+bash +curl +librt +libpthread +screen +shadowsocks-libev-ss-local +openvpn-openssl
 
 PKG_NAME:=luci-app-libernet-plus
@@ -49,8 +49,6 @@ define Package/$(PKG_NAME)/postinst
 	chmod -R 755 /www/libernet/*
 	chmod -R 755 /root/libernet/*
 	chmod -R 755 /root/libernet/bin/*
-	chmod -R 755 /usr/bin/hsize
-	chmod -R 755 /usr/bin/dnstt-client
 	if ! grep -q LIBERNET_DIR /etc/profile; then
 		echo -e "Adding Libernet environment" \
 		&& echo -e "\n# Libernet\nexport LIBERNET_DIR=/root/libernet" | tee -a '/etc/profile'
