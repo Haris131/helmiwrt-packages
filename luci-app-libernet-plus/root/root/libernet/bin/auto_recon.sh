@@ -44,7 +44,7 @@ while [ 1 ]; do
     RKBPS=$(expr $RBPS / 1024)
     if [ $RKBPS -gt 300 ]; then
       "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: green\">Sedang ada data transfer besar</span>"
-      sleep 3
+      sleep 10
       n=0
     else
       "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Failed ${n}</span>"
