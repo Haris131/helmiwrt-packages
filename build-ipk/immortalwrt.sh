@@ -13,5 +13,7 @@ pushd package/community
 # HelmiWrt packages
 git clone --depth=1 https://github.com/Haris131/helmiwrt-packages
 
+git clone --depth=1 https://github.com/Haris131/shc_openwrt
+
 # Out to openwrt dir
 popd
