@@ -49,6 +49,7 @@ define Package/$(PKG_NAME)/postinst
 	chmod -R 755 /www/libernet/*
 	chmod -R 755 /root/libernet/*
 	chmod -R 755 /root/libernet/bin/*
+	sed -i '3 i /usr/sbin/openvpn --mktun --dev tun1' /etc/rc.local
 	if ! grep -q LIBERNET_DIR /etc/profile; then
 		echo -e "Adding Libernet environment" \
 		&& echo -e "\n# Libernet\nexport LIBERNET_DIR=/root/libernet" | tee -a '/etc/profile'
