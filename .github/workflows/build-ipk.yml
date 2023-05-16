@@ -1,317 +1,170 @@
 #=================================================
-
 # Description: Build OpenWrt using GitHub Actions
-
 # Lisence: MIT
-
 # Blog: https://helmiau.com
-
 # HelmiWrt by helmiau.com
-
 # Script base by P3TERX
-
 #=================================================
 
 name: Build IPK
 
 on:
-
   workflow_dispatch:
-
     inputs:
-
       source:
-
         type: choice
-
         description: Select Source.
-
         required: true
-
         default: immortalwrt
-
         options:
-
         - openwrt
-
         - immortalwrt
-
       branch:
-
         type: choice
-
         description: Select OpenWrt Branch.
-
         required: true
-
         default: 21.02.5
-
         options:
-
         - 18.06.9
-
         - 21.02.5
-
         - 21.02.6
-
         - 22.03.4
-
       platform:
-
         type: choice
-
         description: Select device platform.
-
         required: true
-
         default: armvirt/64
-
         options:
-
         - armvirt/64
-
         - sunxi/cortexa53
-
         - ramips/mt7621
-
         - x86/64
-
         - x86/generic
-
+        
 env:
-
   CONFIG_FILE: build-ipk/universal.config
-
   UPLOAD_RELEASE: true
-
   TZ: Asia/Jakarta
-
   DIY_SH: build-ipk/immortalwrt.sh
-
+  
 jobs:
-
   Build:
-
     runs-on: ubuntu-20.04
-
+    
     steps:
-
       - name: Checkout
-
         uses: actions/checkout@main
-
+        
       - name: Initialization Environment
-
         env:
-
           DEBIAN_FRONTEND: noninteractive
-
         run: |
-
           sudo timedatectl set-timezone "$TZ"
-
           sudo mkdir -p /workdir
-
           sudo chown $USER:$GROUPS /workdir
-
           export FILE_DATE=$(date +"%Y.%m.%d")
-
           echo "FILE_DATE=$FILE_DATE" >> $GITHUB_ENV
-
           export SOURCE_WRT=$(echo "${{ github.event.inputs.source }}")
-
           echo "SOURCE_WRT=$SOURCE_WRT" >> $GITHUB_ENV
-
           export REPO_BRANCH=$(echo "${{ github.event.inputs.branch }}")
-
           echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
-
           export PLATFORM=$(echo "${{ github.event.inputs.platform }}")
-
           echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
-
           export PLATFORM_SUB=$(echo "$PLATFORM" | sed 's|\/|\-|g')
-
           echo "PLATFORM_SUB=$PLATFORM_SUB" >> $GITHUB_ENV
-
           export BRANCH_REL=$(echo "releases/$REPO_BRANCH")
-
           echo "BRANCH_REL=$BRANCH_REL" >> $GITHUB_ENV
-
           export BUILD_CONFIG="$GITHUB_WORKSPACE/$CONFIG_FILE"
-
           echo "BUILD_CONFIG=$BUILD_CONFIG" >> $GITHUB_ENV
-
+          
       - name: Clone SDK
-
         id: clone_sdk
-
         working-directory: /workdir
-
         run: |
-
           df -hT $PWD
-
           export REPO_SDK=$(echo "https://downloads.${SOURCE_WRT}.org/${BRANCH_REL}/targets/${PLATFORM}/${SOURCE_WRT}-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-8.4.0_musl.Linux-x86_64.tar.xz")
-
           echo "REPO_SDK=${REPO_SDK}" >> $GITHUB_ENV
-
           echo "sdk url:: ${REPO_SDK}"
-
           wget ${REPO_SDK}
-
           tar xf *.tar.xz
-
           rm -f *.tar.xz
-
           mv ${SOURCE_WRT}-* /workdir/openwrt
-
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-
           export OPENWRT_ROOT_PATH="$GITHUB_WORKSPACE/openwrt"
-
           echo "OPENWRT_ROOT_PATH=$OPENWRT_ROOT_PATH" >> $GITHUB_ENV
-
           echo "BUILD_OPT=$BUILD_OPT" >> $GITHUB_ENV
-
           echo -e "===== Information ====="
-
           echo -e "FILE_DATE is ....... $FILE_DATE"
-
           echo -e "OPENWRT_ROOT_PATH is ....... $OPENWRT_ROOT_PATH"
-
           echo -e "PLATFORM is ....... $PLATFORM"
-
           echo -e "===== End of Information ====="
-
           echo "status=success" >> $GITHUB_OUTPUT
-
+          
       - name: Load Configuration
-
         id: load_cfg
-
         if: steps.clone_sdk.outputs.status == 'success' && !cancelled()
-
         run: |
-
           cd $OPENWRT_ROOT_PATH
-
           chmod +x $GITHUB_WORKSPACE/build-ipk/*.sh
-
           $GITHUB_WORKSPACE/$DIY_SH
-
           echo "status=success" >> $GITHUB_OUTPUT
-
+          
       - name: Install Feeds
-
         id: install_feeds
-
         if: steps.load_cfg.outputs.status == 'success' && !cancelled()
-
         run: |
-
           cd $OPENWRT_ROOT_PATH
-
           ./scripts/feeds update -a
-
           ./scripts/feeds install -a
-
           echo "status=success" >> $GITHUB_OUTPUT
-
+          
       - name: Compile Packages
-
         id: compile
-
         if: steps.install_feeds.outputs.status == 'success' && !cancelled()
-
         run: |
-
           cd $OPENWRT_ROOT_PATH
-
           sed -i -e '/^#/d' -i -e '/^[[:blank:]]*$/ d' "${BUILD_CONFIG}"
-
           echo -e "===== List of Apps ====="
-
           cat $BUILD_CONFIG
-
           echo -e "===== List of Apps ====="
-
           make defconfig
-
           while IFS= read -r line # Read a line
-
           do
-
             make package/${line}/compile -j${nproc} V=w
-
           done < "$BUILD_CONFIG"
-
           echo "LUCIAPPPATH=$OPENWRT_ROOT_PATH/bin/packages/*/base/luci-app" >> $GITHUB_ENV
-
           echo "PKGPATH=$OPENWRT_ROOT_PATH/bin/packages/*/base/" >> $GITHUB_ENV
-
           echo "status=success" >> $GITHUB_OUTPUT
-
+          
       - name: Upload bin directory
-
         uses: actions/upload-artifact@main
-
         if: steps.compile.outputs.status == 'success' && !cancelled()
-
         with:
-
           name: OpenWrt_bin
-
           path: openwrt/bin
-
+          
       - name: Generate New Release Tag
-
         id: tag
-
         if: steps.compile.outputs.status == 'success' && !cancelled()
-
         run: |
-
           sleep 10
-
           echo "release_tag=ipk" >> $GITHUB_OUTPUT
-
           touch release.txt
-
           echo "status=success" >> $GITHUB_OUTPUT
-
+          
       - name: Upload HelmiWrt Packages to GitHub Release
-
         uses: softprops/action-gh-release@v1
-
         if: steps.tag.outputs.status == 'success' && !cancelled()
-
         env:
-
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
         with:
-
           prerelease: false
-
           name: IPK Build ${{ env.FILE_DATE }}
-
           tag_name: ${{ steps.tag.outputs.release_tag }}
-
           files: |
-
             ${{ env.LUCIAPPPATH }}-*
-
-            ${{ env.PKGPATH }}hsize*
-
-            ${{ env.PKGPATH }}dnstt*
-
           body: |
-
             **HelmiWrt LuCI App and Theme IPK for OpenWrt**
-
             THESE PACKAGES IS COOLSNOWWOLF LEDE FIRMWARE BASED !!!!! NOT OFFICIAL OPENWRT BASE !!!!
-
             DWYOR (DO WITH YOUR OWN RISK)
-
             [Donation here](https://www.helmiau.com/pay) • [Installation Tutorial](https://www.google.com/search?q=helmiau.com+helmiwrt+packages)
