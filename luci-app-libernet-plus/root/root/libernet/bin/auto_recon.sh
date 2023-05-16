@@ -33,9 +33,7 @@ while [ 1 ]; do
   else
     echo ping fail
     n=$((n+1))
-    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"-
-    sleep 1
-    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Failed ${n}</span>"
+    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
     R1=$(cat /sys/class/net/"${TUN_DEV}"/statistics/rx_bytes)
     sleep 1
     R2=$(cat /sys/class/net/"${TUN_DEV}"/statistics/rx_bytes)
@@ -45,6 +43,9 @@ while [ 1 ]; do
       "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: green\">Sedang ada data transfer besar</span>"
       sleep 10
       n=0
+    else
+      "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Failed ${n}</span>"
+      sleep 1
     fi
   fi
   echo fail counter $n
