@@ -23,6 +23,14 @@ function check_connection() {
   max_retries=3
   while [[ "${counter}" -lt "${max_retries}" ]]; do
     sleep 5
+    if [ "${TUNNEL_MODE}" = "0" ] || [ "${TUNNEL_MODE}" = "2" ] || [ "${TUNNEL_MODE}" = "6" ] || [ "${TUNNEL_MODE}" = "7" ]; then
+      if [ ! -f $(grep Permission ${LIBERNET_DIR}/log/screenlog.0 2>/dev/null|awk "NR==1"|awk '{print $4}') ]; then
+        "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Username/Password Salah/Kadaluarsa.</span>"
+        # cancel Libernet service
+        cancel_services
+        exit 1
+       fi
+    fi
     # write connection checking to service log
     "${LIBERNET_DIR}/bin/log.sh" -w "Checking connection, attempt: $[${counter} + 1]"
     echo -e "Checking connection, attempt: $[${counter} + 1]"
@@ -39,11 +47,6 @@ function check_connection() {
       # write not connectivity to service log
       "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Socks connection unavailable</span>"
       echo -e "Socks connection unavailable!"
-      if [ "${TUNNEL_MODE}" = "0" ] || [ "${TUNNEL_MODE}" = "2" ] || [ "${TUNNEL_MODE}" = "6" ] || [ "${TUNNEL_MODE}" = "7" ]; then
-        if [ ! -f $(grep Permission ${LIBERNET_DIR}/log/screenlog.0 2>/dev/null|awk "NR==1"|awk '{print $4}') ]; then
-          "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Username/Password Salah/Kadaluarsa.</span>"
-        fi
-      fi
       # cancel Libernet service
       cancel_services
       exit 1
