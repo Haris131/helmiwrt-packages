@@ -107,9 +107,9 @@ function start_services() {
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -r
       ;;
   esac
+  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart Tun2Socks"
   # kill tun2socks if not openvpn
   if [[ "${TUNNEL_MODE}" != '5' ]]; then
-    "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart Tun2Socks"
     "${LIBERNET_DIR}/bin/tun2socks.sh" -v
   fi
   sleep 5
