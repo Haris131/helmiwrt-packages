@@ -49,11 +49,14 @@ while [ 1 ]; do
   if [ $log_file -gt 50 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -r
   fi
-  if [ -f $(grep -c "Connection closed" ${LIBERNET_DIR}/log/screenlog.0) ]; then
-    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: green\">Auto Reconnecting</span>"
-    n=0
-    recon
-  elif [ $n -gt 4 ]; then
+  if [[ "${TUNNEL_MODE}" != '5' ]]; then
+    if [ -f $(grep -c "Connection closed" ${LIBERNET_DIR}/log/screenlog.0) ]; then
+      "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Username/Password Salah/Kadaluarsa.</span>"
+      n=0
+      stop_services
+    fi
+  fi
+  if [ $n -gt 4 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: green\">Auto Reconnecting</span>"
     n=0
     recon
@@ -104,8 +107,11 @@ function start_services() {
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -r
       ;;
   esac
-  "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart Tun2Socks"
-  "${LIBERNET_DIR}/bin/tun2socks.sh" -v
+  # kill tun2socks if not openvpn
+  if [[ "${TUNNEL_MODE}" != '5' ]]; then
+    "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart Tun2Socks"
+    "${LIBERNET_DIR}/bin/tun2socks.sh" -v
+  fi
   sleep 5
   "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: blue\">Auto Reconnect Checking...</span>"
 }
@@ -134,12 +140,15 @@ function stop_services() {
     "6")
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -s
       ;;
-     "7")
+    "7")
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -s
       ;;
   esac
   "${LIBERNET_DIR}/bin/log.sh" -w "Auto Stopping Tun2Socks"
-  "${LIBERNET_DIR}/bin/tun2socks.sh" -w
+  # kill tun2socks if not openvpn
+  if [[ "${TUNNEL_MODE}" != '5' ]]; then
+    "${LIBERNET_DIR}/bin/tun2socks.sh" -w
+  fi
 }
 
 function run() {
@@ -179,3 +188,4 @@ case "${1}" in
     usage
     ;;
 esac
+
