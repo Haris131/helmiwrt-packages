@@ -13,17 +13,13 @@ SERVICE_NAME="Auto Reconnect"
 SYSTEM_CONFIG="${LIBERNET_DIR}/system/config.json"
 TUNNEL_MODE="$(grep 'mode":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
 TUN_DEV="$(grep 'dev":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
-SOCKS_IP="$(grep 'ip":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g' | sed -n '1p')"
-SOCKS_PORT="$(grep 'port":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g' | sed -n '1p')"
-SOCKS_SERVER="${SOCKS_IP}:${SOCKS_PORT}"
 
 function loop() {
 n=0
 while [ 1 ]; do
-  r=$(curl -m4 88.198.46.60 -w "%{http_code}" --proxy socks5://"${SOCKS_SERVER}" -s -o /dev/null | head -c2)
-  ip=$(jq .server "${LIBERNET_DIR}/system/config.json" | sed ' s/"//g')
-  echo $r $ip
-  if [ $r -eq 30 ]; then
+  ip=$(curl -s -m10 ipinfo.io/ip | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -c2)
+  echo $ip
+  if [ $ip ]; then
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
     sleep 1
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">HTTP/1.1 200 OK [IP: ${ip}]</span>"
