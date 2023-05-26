@@ -357,7 +357,7 @@
                             $ssh_config = json_decode($ssh_config);
                             $system_config->tunnel->profile->ssh = $profile;
                             $system_config->server = $ssh_config->ip;
-                            $system_config->cdn_server =  "";
+                            $system_config->cdn_server = $ssh_config->http->proxy->ip;
                             $system_config->tun2socks->udpgw->ip = $ssh_config->udpgw->ip;
                             $system_config->tun2socks->udpgw->port = $ssh_config->udpgw->port;
                             break;
@@ -367,7 +367,7 @@
                             $v2ray_config = json_decode($v2ray_config);
                             $system_config->tunnel->profile->v2ray = $profile;
                             $system_config->server = $v2ray_config->etc->ip;
-                            $system_config->cdn_server =  "";
+                            $system_config->cdn_server = "";
                             $system_config->tun2socks->udpgw->ip = $v2ray_config->etc->udpgw->ip;
                             $system_config->tun2socks->udpgw->port = $v2ray_config->etc->udpgw->port;
                             break;
@@ -377,7 +377,7 @@
                             $sshl_config = json_decode($sshl_config);
                             $system_config->tunnel->profile->ssh_ssl = $profile;
                             $system_config->server = $sshl_config->ip;
-                            $system_config->cdn_server =  "";
+                            $system_config->cdn_server = "";
                             $system_config->tun2socks->udpgw->ip = $sshl_config->udpgw->ip;
                             $system_config->tun2socks->udpgw->port = $sshl_config->udpgw->port;
                             break;
@@ -387,7 +387,7 @@
                             $trojan_config = json_decode($trojan_config);
                             $system_config->tunnel->profile->trojan = $profile;
                             $system_config->server = $trojan_config->etc->ip;
-                            $system_config->cdn_server =  "";
+                            $system_config->cdn_server = "";
                             $system_config->tun2socks->udpgw->ip = $trojan_config->etc->udpgw->ip;
                             $system_config->tun2socks->udpgw->port = $trojan_config->etc->udpgw->port;
                             break;
@@ -397,7 +397,7 @@
                             $shadowsocks_config = json_decode($shadowsocks_config);
                             $system_config->tunnel->profile->shadowsocks = $profile;
                             $system_config->server = $shadowsocks_config->etc->ip;
-                            $system_config->cdn_server =  "";
+                            $system_config->cdn_server = "";
                             $system_config->tun2socks->udpgw->ip = $shadowsocks_config->etc->udpgw->ip;
                             $system_config->tun2socks->udpgw->port = $shadowsocks_config->etc->udpgw->port;
                             break;
@@ -406,7 +406,7 @@
                             $openvpn_config = file_get_contents($libernet_dir.'/bin/config/openvpn/'.$profile.'.json');
                             $openvpn_config = json_decode($openvpn_config);
                             $system_config->tunnel->profile->openvpn = $profile;
-                            $system_config->cdn_server =  "";
+                            $system_config->cdn_server = "";
                             $system_config->tun2socks->udpgw->ip = $openvpn_config->udpgw->ip;
                             $system_config->tun2socks->udpgw->port = $openvpn_config->udpgw->port;
                             break;
