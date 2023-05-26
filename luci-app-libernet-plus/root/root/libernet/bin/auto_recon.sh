@@ -54,6 +54,7 @@ while [ 1 ]; do
       "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Username/Password Salah/Kadaluarsa.</span>"
       n=0
       stop_services
+      exit 1
     fi
   fi
   if [ $n -gt 4 ]; then
