@@ -50,7 +50,7 @@ while [ 1 ]; do
   if [ $log_file -gt 50 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -r
   fi
-  if [ "${TUNNEL_MODE}" = "0" ] || [ "${TUNNEL_MODE}" = "2" ] || [ "${TUNNEL_MODE}" = "6" ] || [ "${TUNNEL_MODE}" = "7" ]; then
+  if [ "${TUNNEL_MODE}" = "0" ] || [ "${TUNNEL_MODE}" = "1" ] || [ "${TUNNEL_MODE}" = "3" ] || [ "${TUNNEL_MODE}" = "4" ]; then
     if [ -f $(grep -c "Connection closed" ${LIBERNET_DIR}/log/screenlog.0) ]; then
       "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Username/Password Salah/Kadaluarsa.</span>"
       n=0
@@ -122,7 +122,7 @@ function stop_services() {
     "3")
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -s
       ;;
-     "4")
+    "4")
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -s
       ;;
   esac
