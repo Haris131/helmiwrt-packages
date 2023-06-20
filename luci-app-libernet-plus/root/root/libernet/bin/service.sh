@@ -192,8 +192,6 @@ function start_services() {
 }
 
 function stop_services() {
-  # clear service log
-  "${LIBERNET_DIR}/bin/log.sh" -r
   # write service status: stopping
   "${LIBERNET_DIR}/bin/log.sh" -s 3
   # write to service log
