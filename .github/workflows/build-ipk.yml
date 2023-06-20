@@ -15,7 +15,7 @@ on:
         type: choice
         description: Select Source.
         required: true
-        default: immortalwrt
+        default: openwrt
         options:
         - openwrt
         - immortalwrt
@@ -23,11 +23,11 @@ on:
         type: choice
         description: Select OpenWrt Branch.
         required: true
-        default: 21.02.5
+        default: 21.02.7
         options:
         - 18.06.9
-        - 21.02.5
         - 21.02.6
+        - 21.02.7
         - 22.03.4
       platform:
         type: choice
