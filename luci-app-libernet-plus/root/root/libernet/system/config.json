@@ -1,16 +1,13 @@
 {
     "tunnel": {
         "autostart": false,
-        "dns_resolver": false,
+        "dns_resolver": true,
         "ping_loop": false,
         "auto_recon": true,
         "mode": 0,
         "profile": {
             "ssh": "",
-            "v2ray": "",
             "ssh_ssl": "",
-            "trojan": "",
-            "shadowsocks": "",
             "openvpn": "",
             "ssh_ws_cdn": "",
             "ssh_slowdns": ""

@@ -98,26 +98,8 @@ function ssh_service() {
   run_other_services
 }
 
-function v2ray_service() {
-  "${LIBERNET_DIR}/bin/v2ray.sh" -r
-  check_connection
-  run_other_services
-}
-
 function ssh_ssl_service() {
   "${LIBERNET_DIR}/bin/ssh-ssl.sh" -r
-  check_connection
-  run_other_services
-}
-
-function trojan_service() {
-  "${LIBERNET_DIR}/bin/trojan.sh" -r
-  check_connection
-  run_other_services
-}
-
-function shadowsocks_service() {
-  "${LIBERNET_DIR}/bin/shadowsocks.sh" -r
   check_connection
   run_other_services
 }
@@ -190,24 +172,15 @@ function start_services() {
       ssh_service
       ;;
     "1")
-      v2ray_service
-      ;;
-    "2")
       ssh_ssl_service
       ;;
-    "3")
-      trojan_service
-      ;;
-    "4")
-      shadowsocks_service
-      ;;
-    "5")
+    "2")
       openvpn_service
       ;;
-    "6")
+    "3")
       ssh_ws_cdn_service
       ;;
-    "7")
+    "4")
       ssh_slowdns_service
       ;;
   esac
@@ -219,6 +192,8 @@ function start_services() {
 }
 
 function stop_services() {
+  # clear service log
+  "${LIBERNET_DIR}/bin/log.sh" -r
   # write service status: stopping
   "${LIBERNET_DIR}/bin/log.sh" -s 3
   # write to service log
@@ -228,30 +203,21 @@ function stop_services() {
       "${LIBERNET_DIR}/bin/ssh.sh" -s
       ;;
     "1")
-      "${LIBERNET_DIR}/bin/v2ray.sh" -s
-      ;;
-    "2")
       "${LIBERNET_DIR}/bin/ssh-ssl.sh" -s
       ;;
-    "3")
-      "${LIBERNET_DIR}/bin/trojan.sh" -s
-      ;;
-    "4")
-      "${LIBERNET_DIR}/bin/shadowsocks.sh" -s
-      ;;
-    "5")
+    "2")
       "${LIBERNET_DIR}/bin/openvpn.sh" -s
       ;;
-    "6")
+    "3")
       "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -s
       ;;
-    "7")
+    "4")
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -s
       ;;
   esac
   if [[ "${1}" != '-c' ]]; then
     # kill tun2socks if not openvpn
-    if [[ "${TUNNEL_MODE}" != '5' ]]; then
+    if [[ "${TUNNEL_MODE}" != '2' ]]; then
       "${LIBERNET_DIR}/bin/tun2socks.sh" -w
     fi
     # kill memory cleaner service
@@ -321,15 +287,6 @@ case "${1}" in
     ;;
   -sshl)
     ssh_ssl_service
-    ;;
-  -sv)
-    v2ray_service
-    ;;
-  -tr)
-    trojan_service
-    ;;
-  -ss)
-    shadowsocks_service
     ;;
   -so)
     openvpn_service

@@ -12,8 +12,7 @@ LUCI_TITLE:=LuCI Libernet Plus App
 LUCI_PKGARCH:=all
 LUCI_DEPENDS:=coreutils +coreutils-stdbuf +jq +ip-full +kmod-tun +openssh-client \
 	+php8 +php8-cgi +php8-mod-session +python3 +httping +stunnel +stubby dnstt \
-	+badvpn +corkscrew +simple-obfs +sshpass +trojan-go +v2ray-core hsize \
-	+bash +curl +librt +libpthread +screen +shadowsocks-libev-ss-local +openvpn-openssl
+	+badvpn +corkscrew +sshpass +hsize +bash +curl +librt +libpthread +screen +openvpn-openssl
 
 PKG_NAME:=luci-app-libernet-plus
 PKG_VERSION:=2.1
@@ -50,10 +49,18 @@ define Package/$(PKG_NAME)/postinst
 	chmod -R 755 /root/libernet/*
 	chmod -R 755 /root/libernet/bin/*
 	/usr/sbin/openvpn --mktun --dev tun1
+	echo -e "Configuring Libernet service"
+	# disable services startup
+	# DoT
+	/etc/init.d/stubby disable
+	# openvpn
+	/etc/init.d/openvpn disable
+	# stunnel
+	/etc/init.d/stunnel disable
 	if ! grep -q LIBERNET_DIR /etc/profile; then
 		echo -e "Adding Libernet environment" \
 		&& echo -e "\n# Libernet\nexport LIBERNET_DIR=/root/libernet" | tee -a '/etc/profile'
-	  fi
+	fi
 	# Autofix download index.php, index.html
 	if ! grep -q ".php=/usr/bin/php-cgi" /etc/config/uhttpd; then
 		echo -e "Enabling uhttp php execution"
