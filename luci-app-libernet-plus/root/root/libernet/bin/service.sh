@@ -23,7 +23,7 @@ function check_connection() {
   max_retries=3
   while [[ "${counter}" -lt "${max_retries}" ]]; do
     sleep 5
-    if [ "${TUNNEL_MODE}" = "0" ] || [ "${TUNNEL_MODE}" = "2" ] || [ "${TUNNEL_MODE}" = "6" ] || [ "${TUNNEL_MODE}" = "7" ]; then
+    if [ "${TUNNEL_MODE}" = "0" ] || [ "${TUNNEL_MODE}" = "1" ] || [ "${TUNNEL_MODE}" = "3" ] || [ "${TUNNEL_MODE}" = "4" ]; then
       if [ ! -f $(grep Permission ${LIBERNET_DIR}/log/screenlog.0 2>/dev/null|awk "NR==1"|awk '{print $4}') ]; then
         "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Username/Password Salah/Kadaluarsa.</span>"
         # cancel Libernet service
