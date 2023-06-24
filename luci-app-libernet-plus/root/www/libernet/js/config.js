@@ -122,7 +122,7 @@ const app = new Vue({
     },
     computed: {
         openvpn_auth_user_pass() {
-            return this.config.temp.modes[5].profile.ovpn.includes("auth-user-pass")
+            return this.config.temp.modes[2].profile.ovpn.includes("auth-user-pass")
         },
         sortedModes() {
             const modes = [...this.config.temp.modes];
@@ -353,7 +353,7 @@ const app = new Vue({
             reader.readAsText(file)
             reader.onload = e => {
                 this.$emit("load", e.target.result)
-                this.config.temp.modes[5].profile.ovpn = e.target.result
+                this.config.temp.modes[2].profile.ovpn = e.target.result
             }
         },
         resolveServerHost: _.debounce(function () {

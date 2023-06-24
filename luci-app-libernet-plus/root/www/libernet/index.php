@@ -51,7 +51,7 @@
                             </div>
                         </form>
                             <div class="row">
-                                <div v-if="config.mode !== 2" class="col-lg-6 col-md-6 pb-lg-1">
+                                <div v-if="config.mode !== 5" class="col-lg-6 col-md-6 pb-lg-1">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" v-model="config.system.tun2socks.legacy" :disabled="status === true" id="tun2socks-legacy" >
                                         <label class="form-check-label" for="tun2socks-legacy">

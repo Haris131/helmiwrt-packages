@@ -49,13 +49,8 @@ define Package/$(PKG_NAME)/postinst
 	chmod -R 755 /root/libernet/*
 	chmod -R 755 /root/libernet/bin/*
 	/usr/sbin/openvpn --mktun --dev tun1
-	echo -e "Configuring Libernet service"
-	# disable services startup
-	# DoT
 	/etc/init.d/stubby disable
-	# openvpn
 	/etc/init.d/openvpn disable
-	# stunnel
 	/etc/init.d/stunnel disable
 	if ! grep -q LIBERNET_DIR /etc/profile; then
 		echo -e "Adding Libernet environment" \

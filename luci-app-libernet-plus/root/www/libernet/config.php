@@ -66,12 +66,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div v-if="config.temp.mode === 1" class="col-md-6">
-                                    <label>Protocol</label>
-                                    <select class="form-control" v-model="config.temp.modes[1].profile.protocol" required>
-                                        <option v-for="protocol in config.temp.modes[1].protocols" :value="protocol.value">{{ protocol.name }}</option>
-                                    </select>
-                                </div>
                             </div>
 
                             <div v-if="config.temp.mode === 0" class="ssh pb-lg-2">
@@ -190,7 +184,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div v-if="config.temp.modes[5].profile.ssl" class="form-row pb-lg-2">
+                                <div v-if="config.temp.modes[2].profile.ssl" class="form-row pb-lg-2">
                                     <div class="col-md-4">
                                         <label>SNI</label>
                                         <input type="text" class="form-control" placeholder="www.bug.com" v-model="config.temp.modes[2].profile.sni" required>
