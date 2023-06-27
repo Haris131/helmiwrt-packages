@@ -129,7 +129,17 @@
                 // use hard coded tun device
                 if (file_exists("/usr/bin/hsize")) {
                 	exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $2}' | awk -F ' ' '{print $1}' | hsize", $rx);
-                    exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $3}' | awk -F ' ' '{print $1}' | hsize", $tx);
+                    if ($rx){
+                    	exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $3}' | awk -F ' ' '{print $1}' | hsize", $tx);
+                    } else {
+                    	exec("ip r | grep default | cut -d' ' -f5", $interf);
+                    	exec("cat /sys/class/net/$interf[0]/statistics/rx_bytes", $rxp);
+                        exec("cat /sys/class/net/$interf[0]/statistics/tx_bytes", $txp);
+                        exec("cat /tmp/libernet_rx_tx | awk 'NR==1'", $rxo);
+                        exec("cat /tmp/libernet_rx_tx | awk 'NR==2'", $txo);
+                        exec("expr $rxp[0] - $rxo[0] | hsize", $rx);
+                        exec("expr $txp[0] - $txo[0] | hsize", $tx);
+                    	}
                 } else {
                 	exec("ifconfig $tundev | grep 'bytes:' | awk '{print $3, $4}' | sed 's/(//g; s/)//g'", $rx);
                     exec("ifconfig $tundev | grep 'bytes:' | awk '{print $7, $8}' | sed 's/(//g; s/)//g'", $tx);
