@@ -13,17 +13,18 @@ SERVICE_NAME="Auto Reconnect"
 SYSTEM_CONFIG="${LIBERNET_DIR}/system/config.json"
 TUNNEL_MODE="$(grep 'mode":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
 TUN_DEV="$(grep 'dev":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
+DYNAMIC_PORT="$(grep 'port":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g' | sed -n '1p')"
 
 function loop() {
 n=0
 while [ 1 ]; do
   r=$(curl -m4 88.198.46.60 -w "%{http_code}" -s -o /dev/null | head -c2)
-  ip=$(curl -s -m10 ipinfo.io/ip | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')
+  ip=$(timeout 5 httping -c3 -g http://google.com -5 2>/dev/null|awk "NR==2"|awk -F 'time=' '{print $2}'|awk -F. '{print $1}')
   echo $r $ip
   if [ $r -eq 30 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
     sleep 1
-    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">HTTP/1.1 200 OK [IP: ${ip}]</span>"
+    "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">HTTP/1.1 200 OK (${ip}ms)</span>"
     echo wan ok
     sleep 3
     n=0
@@ -101,9 +102,28 @@ function start_services() {
   "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart Tun2Socks"
   # kill tun2socks if not openvpn
   if [[ "${TUNNEL_MODE}" != '2' ]]; then
-    "${LIBERNET_DIR}/bin/tun2socks.sh" -v
+    counter=0
+     max_retries=3
+     while [[ "${counter}" -lt "${max_retries}" ]]; do
+     sleep 5
+     if curl -so /dev/null -x "socks5://127.0.0.1:${DYNAMIC_PORT}" "http://bing.com"; then
+       "${LIBERNET_DIR}/bin/tun2socks.sh" -v
+       interf=$(ip r | grep default | cut -d' ' -f5)
+       rx_bytes=$(cat /sys/class/net/$interf/statistics/rx_bytes > /tmp/libernet_rx_tx)
+       tx_bytes=$(cat /sys/class/net/$interf/statistics/tx_bytes >> /tmp/libernet_rx_tx)
+       break
+     fi
+     counter=$[${counter} + 1]
+     # max retries reach
+     if [[ "${counter}" -eq "${max_retries}" ]]; then
+       # write not connectivity to service log
+       "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: red\">Socks connection unavailable</span>"
+       echo -e "Socks connection unavailable!"
+       # cancel Libernet service
+       recon
+     fi
+     done
   fi
-  sleep 5
   "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: blue\">Auto Reconnect Checking...</span>"
 }
 
