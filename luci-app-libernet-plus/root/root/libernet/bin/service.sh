@@ -61,6 +61,9 @@ function run_other_services() {
     memory_cleaner_service
     ping_loop_service
     auto_recon_service
+    interf=$(ip r | grep default | cut -d' ' -f5)
+    rx_bytes=$(cat /sys/class/net/$interf/statistics/rx_bytes > /tmp/libernet_rx_tx)
+    tx_bytes=$(cat /sys/class/net/$interf/statistics/tx_bytes >> /tmp/libernet_rx_tx)
   fi
 }
 
