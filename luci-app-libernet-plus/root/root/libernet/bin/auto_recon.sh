@@ -15,6 +15,12 @@ TUNNEL_MODE="$(grep 'mode":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; 
 TUN_DEV="$(grep 'dev":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
 DYNAMIC_PORT="$(grep 'port":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g' | sed -n '1p')"
 
+if ifconfig $TUN_DEV | grep 'bytes:'; then
+  echo -n ""
+else
+  TUN_DEV=$(ip r | grep default | cut -d" " -f5)
+fi
+
 function loop() {
 n=0
 while [ 1 ]; do
