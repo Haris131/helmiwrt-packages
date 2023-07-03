@@ -108,7 +108,7 @@ function start_services() {
   "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart Tun2Socks"
   # kill tun2socks if not openvpn
   if [[ "${TUNNEL_MODE}" != '2' ]]; then
-    counter=0
+     counter=0
      max_retries=3
      while [[ "${counter}" -lt "${max_retries}" ]]; do
      sleep 5
