@@ -11,7 +11,6 @@ fi
 
 LOG_FILE="${LIBERNET_DIR}/log/service.log"
 STATUS_FILE="${LIBERNET_DIR}/log/status.log"
-UPDATE_FILE="${LIBERNET_DIR}/log/update.log"
 CONNECTED_FILE="${LIBERNET_DIR}/log/connected.log"
 
 function write_log() {
@@ -20,10 +19,6 @@ function write_log() {
 
 function write_status() {
   echo -e "${1}" > "${STATUS_FILE}"
-}
-
-function write_update() {
-  echo -e "${1}" > "${UPDATE_FILE}"
 }
 
 function write_connected() {
