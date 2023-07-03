@@ -57,11 +57,7 @@ function start_tun2socks {
   # write to service log
   "${LIBERNET_DIR}/bin/log.sh" -w "Starting tun2socks service"
   ifconfig ${TUN_DEV} ${TUN_GATEWAY} netmask ${TUN_NETMASK} up
-  if [[ $TUN2SOCKS_MODE == "false" ]]; then
-    screen -AmdS go-tun2socks go-tun2socks -loglevel none -proxyServer "${SOCKS_SERVER}" -proxyType socks -tunName "${TUN_DEV}" -tunAddr "${TUN_ADDRESS}" -tunGw "${TUN_GATEWAY}" -tunMask "${TUN_NETMASK}"
-  else
-    screen -AmdS badvpn-tun2socks badvpn-tun2socks --loglevel 0 --tundev ${TUN_DEV} --netif-ipaddr ${TUN_ADDRESS} --netif-netmask ${TUN_NETMASK} --socks-server-addr ${SOCKS_SERVER} --udpgw-remote-server-addr "${UDPGW}"
-  fi
+  screen -AmdS badvpn-tun2socks badvpn-tun2socks --loglevel 0 --tundev ${TUN_DEV} --netif-ipaddr ${TUN_ADDRESS} --netif-netmask ${TUN_NETMASK} --socks-server-addr ${SOCKS_SERVER} --udpgw-remote-server-addr "${UDPGW}"
   # removing default route
   echo ${DEFAULT_ROUTE} > ${ROUTE_LOG} \
     && ip route del ${DEFAULT_ROUTE}
@@ -75,11 +71,7 @@ function start_tun2socks {
 function stop_tun2socks {
   # write to service log
   "${LIBERNET_DIR}/bin/log.sh" -w "Stopping tun2socks service"
-  if [[ $TUN2SOCKS_MODE == "false" ]]; then
-    kill $(screen -list | grep go-tun2socks | awk -F '[.]' {'print $1'})
-  else
-    kill $(screen -list | grep badvpn-tun2socks | awk -F '[.]' {'print $1'})
-  fi
+  kill $(screen -list | grep badvpn-tun2socks | awk -F '[.]' {'print $1'})
   # recover default route
   ip route add $(cat "${ROUTE_LOG}") \
     && rm -rf "${ROUTE_LOG}"
@@ -158,14 +150,10 @@ sleep 1
 iptables -t nat -N PROXY 2>/dev/null
 iptables -t nat -I OUTPUT -j PROXY 2>/dev/null
 iptables -t nat -A PREROUTING -i br-lan -p tcp -j PROXY
-iptables -t nat -A PROXY -d 127.0.0.0/8 -j RETURN
-iptables -t nat -A PROXY -d 192.168.0.0/16 -j RETURN
-iptables -t nat -A PROXY -d 0.0.0.0/8 -j RETURN
-iptables -t nat -A PROXY -d 10.0.0.0/8 -j RETURN
-iptables -t nat -A PROXY -d 169.254.0.0/16 -j RETURN
-iptables -t nat -A PROXY -d 172.16.0.0/12 -j RETURN
-iptables -t nat -A PROXY -d 224.0.0.0/4 -j RETURN
-iptables -t nat -A PROXY -d 240.0.0.0/4 -j RETURN
+intranet=(127.0.0.0/8 192.168.0.0/16 0.0.0.0/8 10.0.0.0/8)
+for subnet in ${intranet[@]} ; do
+  iptables -t nat -A PROXY -d ${subnet} -j RETURN
+done
 iptables -t nat -A PROXY -p tcp -j REDIRECT --to-ports 8123
 iptables -t nat -A PROXY -p tcp -j REDIRECT --to-ports 8124
 iptables -t nat -A PROXY -p udp --dport 53 -j REDIRECT --to-ports ${UDPGW_PORT}
