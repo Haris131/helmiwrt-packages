@@ -32,7 +32,7 @@ while [ 1 ]; do
     sleep 1
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">HTTP/1.1 200 OK (${ip}ms)</span>"
     echo wan ok
-    sleep 3
+    sleep 30
     n=0
   else
     echo ping fail
@@ -40,7 +40,7 @@ while [ 1 ]; do
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
     sleep 1
     R1=$(cat /sys/class/net/"${TUN_DEV}"/statistics/rx_bytes)
-    sleep 1
+    sleep 2
     R2=$(cat /sys/class/net/"${TUN_DEV}"/statistics/rx_bytes)
     RBPS=$(expr $R2 - $R1)
     RKBPS=$(expr $RBPS / 1024)
