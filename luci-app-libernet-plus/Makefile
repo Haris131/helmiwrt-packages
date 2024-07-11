@@ -52,7 +52,7 @@ define Package/$(PKG_NAME)/postinst
 	/etc/init.d/stubby disable
 	/etc/init.d/openvpn disable
 	/etc/init.d/stunnel disable
-        /etc/inut.d/redsocks disable
+        /etc/init.d/redsocks disable
 	if ! grep -q LIBERNET_DIR /etc/profile; then
 		echo -e "Adding Libernet environment" \
 		&& echo -e "\n# Libernet\nexport LIBERNET_DIR=/root/libernet" | tee -a '/etc/profile'
