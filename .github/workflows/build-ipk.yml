@@ -133,7 +133,7 @@ jobs:
           make defconfig
           while IFS= read -r line # Read a line
           do
-            make package/${line}/compile -j${nproc} V=w
+            make package/${line}/compile -j${nproc} V=s
           done < "$BUILD_CONFIG"
           echo "LUCIAPPPATH=$OPENWRT_ROOT_PATH/bin/packages/*/base/luci-app" >> $GITHUB_ENV
           echo "PKGPATH=$OPENWRT_ROOT_PATH/bin/packages/*/base/" >> $GITHUB_ENV
