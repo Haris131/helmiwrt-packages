@@ -26,15 +26,15 @@ on:
         default: 21.02.7
         options:
         - 18.06.9
-        - 21.02.6
         - 21.02.7
-        - 22.03.4
+        - 23.05.4
       platform:
         type: choice
         description: Select device platform.
         required: true
         default: armvirt/64
         options:
+        - armsr/64
         - armvirt/64
         - sunxi/cortexa53
         - ramips/mt7621
