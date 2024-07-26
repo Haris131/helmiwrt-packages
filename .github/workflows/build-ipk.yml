@@ -34,7 +34,7 @@ on:
         required: true
         default: armvirt/64
         options:
-        - armsr/64
+        - armsr/armv8
         - armvirt/64
         - sunxi/cortexa53
         - ramips/mt7621
