@@ -12,7 +12,7 @@ LUCI_TITLE:=LuCI Libernet Plus App
 LUCI_PKGARCH:=all
 LUCI_DEPENDS:=coreutils +coreutils-stdbuf +jq +ip-full +kmod-tun +openssh-client \
 	+php8 +php8-cgi +php8-mod-session +python3 +httping +stunnel +stubby +dnstt +redsocks\
-	+badvpn +corkscrew +sshpass +hsize +bash +curl +librt +libpthread +screen +openvpn-openssl
+	+badvpn +corkscrew +sshpass +bash +curl +librt +libpthread +screen +openvpn-openssl
 
 PKG_NAME:=luci-app-libernet-plus
 PKG_VERSION:=2.1
