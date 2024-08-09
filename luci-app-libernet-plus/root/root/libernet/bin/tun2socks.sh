@@ -29,7 +29,6 @@ readarray -t PROXY_IPS < <(jq -r '.proxy_servers[]' < ${SYSTEM_CONFIG})
 readarray -t DNS_IPS < <(jq -r '.dns_servers[]' < ${SYSTEM_CONFIG})
 ROUTE_LOG="${LIBERNET_DIR}/log/route.log"
 DEFAULT_ROUTE="$(ip route show | grep default)"
-DYNAMIC_PORT="$(grep 'port":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g' | sed -n '1p')"
 
 function init_tun_dev {
   # write to service log
@@ -57,7 +56,11 @@ function start_tun2socks {
   # write to service log
   "${LIBERNET_DIR}/bin/log.sh" -w "Starting tun2socks service"
   ifconfig ${TUN_DEV} ${TUN_GATEWAY} netmask ${TUN_NETMASK} up
-  screen -AmdS badvpn-tun2socks badvpn-tun2socks --loglevel 0 --tundev ${TUN_DEV} --netif-ipaddr ${TUN_ADDRESS} --netif-netmask ${TUN_NETMASK} --socks-server-addr ${SOCKS_SERVER} --udpgw-remote-server-addr "${UDPGW}"
+  if [[ $TUN2SOCKS_MODE == "false" ]]; then
+    screen -AmdS go-tun2socks go-tun2socks -loglevel none -proxyServer "${SOCKS_SERVER}" -proxyType socks -tunName "${TUN_DEV}" -tunAddr "${TUN_ADDRESS}" -tunGw "${TUN_GATEWAY}" -tunMask "${TUN_NETMASK}"
+  else
+    screen -AmdS badvpn-tun2socks badvpn-tun2socks --loglevel 0 --tundev ${TUN_DEV} --netif-ipaddr ${TUN_ADDRESS} --netif-netmask ${TUN_NETMASK} --socks-server-addr ${SOCKS_SERVER} --udpgw-remote-server-addr "${UDPGW}"
+  fi
   # removing default route
   echo ${DEFAULT_ROUTE} > ${ROUTE_LOG} \
     && ip route del ${DEFAULT_ROUTE}
@@ -71,7 +74,11 @@ function start_tun2socks {
 function stop_tun2socks {
   # write to service log
   "${LIBERNET_DIR}/bin/log.sh" -w "Stopping tun2socks service"
-  kill $(screen -list | grep badvpn-tun2socks | awk -F '[.]' {'print $1'})
+  if [[ $TUN2SOCKS_MODE == "false" ]]; then
+    kill $(screen -list | grep go-tun2socks | awk -F '[.]' {'print $1'})
+  else
+    kill $(screen -list | grep badvpn-tun2socks | awk -F '[.]' {'print $1'})
+  fi
   # recover default route
   ip route add $(cat "${ROUTE_LOG}") \
     && rm -rf "${ROUTE_LOG}"
@@ -108,71 +115,6 @@ function route_del_ip {
   echo -e "Routes removed!"
 }
 
-function start_redsocks {
-# write to service log
-"${LIBERNET_DIR}/bin/log.sh" -w "Starting redsocks service"
-cat <<EOF> /etc/redsocks.conf
-base {
-	log_debug = off;
-	log_info = off;
-	redirector = iptables;
-}
-redsocks {
-	local_ip = 0.0.0.0;
-	local_port = 8123;
-	ip = ${SOCKS_IP};
-	port = ${SOCKS_PORT};
-	type = socks5;
-}
-redsocks {
-	local_ip = 127.0.0.1;
-	local_port = 8124;
-	ip = ${TUN_GATEWAY};
-	port = ${SOCKS_PORT};
-	type = socks5;
-}
-redudp {
-    local_ip = ${UDPGW_IP}; 
-    local_port = ${UDPGW_PORT};
-    ip = ${TUN_GATEWAY};
-	port = ${SOCKS_PORT};
-    dest_ip = 8.8.8.8; 
-    dest_port = 53; 
-    udp_timeout = 30;
-    udp_timeout_stream = 180;
-}
-dnstc {
-	local_ip = 127.0.0.1;
-	local_port = 5300;
-}
-EOF
-sleep 1
-iptables -t nat -N PROXY 2>/dev/null
-iptables -t nat -I OUTPUT -j PROXY 2>/dev/null
-iptables -t nat -A PREROUTING -i br-lan -p tcp -j PROXY
-intranet=(127.0.0.0/8 192.168.0.0/16 0.0.0.0/8 10.0.0.0/8)
-for subnet in ${intranet[@]} ; do
-  iptables -t nat -A PROXY -d ${subnet} -j RETURN
-done
-iptables -t nat -A PROXY -p tcp -j REDIRECT --to-ports 8123
-iptables -t nat -A PROXY -p tcp -j REDIRECT --to-ports 8124
-iptables -t nat -A PROXY -p udp --dport 53 -j REDIRECT --to-ports ${UDPGW_PORT}
-screen -AmdS redsocks redsocks -c /etc/redsocks.conf -p /var/run/redsocks.pid
-echo -e "Redsocks started!"
-# write connected time
-"${LIBERNET_DIR}/bin/log.sh" -c "$(date +"%s")"
-}
-
-function stop_redsocks {
-# write to service log
-"${LIBERNET_DIR}/bin/log.sh" -w "Stopping redsocks service"
-kill $(screen -list | grep redsocks | awk -F '[.]' {'print $1'})
-iptables -t nat -F OUTPUT 2>/dev/null
-iptables -t nat -F PROXY 2>/dev/null
-iptables -t nat -F PREROUTING 2>/dev/null
-echo -e "Redsocks stopped!"
-}
-
 function usage() {
   cat <<EOF
 Usage:
@@ -187,27 +129,19 @@ EOF
 
 case "${1}" in
   -v)
-    if [[ $TUN2SOCKS_MODE == "false" ]]; then
-      start_redsocks
-    else
-      # start tun2socks service
-       init_tun_dev
-       route_add_ip
-       start_tun2socks
-    fi
+    # start tun2socks service
+    init_tun_dev
+    route_add_ip
+    start_tun2socks
     ;;
   -w)
-    if [[ $TUN2SOCKS_MODE == "false" ]]; then
-      stop_redsocks
-    else
-      # stop tun2socks service
-      echo -e "Stopping Tun2socks service ..."
-      stop_tun2socks
-      echo -e "Removing routes ..."
-      route_del_ip
-      echo -e "Removing tun device ..."
-      destroy_tun_dev
-    fi
+    # stop tun2socks service
+    echo -e "Stopping Tun2socks service ..."
+    stop_tun2socks
+    echo -e "Removing routes ..."
+    route_del_ip
+    echo -e "Removing tun device ..."
+    destroy_tun_dev
     ;;
   -i)
     init_tun_dev
