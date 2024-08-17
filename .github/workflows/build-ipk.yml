@@ -114,7 +114,7 @@ jobs:
         if: steps.clone_sdk.outputs.status == 'success' && !cancelled()
         run: |
           cd $OPENWRT_ROOT_PATH
-          sed -i "s|src-git-full packages https://git.openwrt.org/feed/packages.git^48242ee7a|src-git-full packages https://github.com/HandsomeMod/packages.git|g" feeds.conf.default
+          sed -i "s|src-git-full packages .*|src-git-full packages https://github.com/HandsomeMod/packages.git|g" feeds.conf.default
           echo "src-git-full handsomefeed https://github.com/HandsomeMod/handsomefeed.git" >> feeds.conf.default
           chmod +x $GITHUB_WORKSPACE/build-ipk/*.sh
           $GITHUB_WORKSPACE/$DIY_SH
