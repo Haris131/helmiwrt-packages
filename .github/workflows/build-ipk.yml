@@ -116,8 +116,6 @@ jobs:
           cd $OPENWRT_ROOT_PATH
           sed -i "s|src-git-full packages https://git.openwrt.org/feed/packages.git^48242ee7a|src-git-full packages https://github.com/HandsomeMod/packages.git|g" feeds.conf.default
           echo "src-git-full handsomefeed https://github.com/HandsomeMod/handsomefeed.git" >> feeds.conf.default
-          echo "src-git-full extra https://github.com/HandsomeMod/extra.git" >> feeds.conf.default
-          echo "src-git-full xorg https://github.com/HandsomeMod/xorg.git" >> feeds.conf.default
           chmod +x $GITHUB_WORKSPACE/build-ipk/*.sh
           $GITHUB_WORKSPACE/$DIY_SH
           echo "status=success" >> $GITHUB_OUTPUT
