@@ -114,8 +114,6 @@ jobs:
         if: steps.clone_sdk.outputs.status == 'success' && !cancelled()
         run: |
           cd $OPENWRT_ROOT_PATH
-          sed -i "s|src-git packages .*|src-git-full packages https://github.com/HandsomeMod/packages.git|g" >> feeds.conf.default
-          echo "src-git-full handsomefeed https://github.com/HandsomeMod/handsomefeed.git" >> feeds.conf.default
           chmod +x $GITHUB_WORKSPACE/build-ipk/*.sh
           $GITHUB_WORKSPACE/$DIY_SH
           echo "status=success" >> $GITHUB_OUTPUT
