@@ -7,12 +7,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=psiphon-tunnel-core
-PKG_VERSION:=2.0.29
-PKG_RELEASE:=2
+PKG_VERSION:=2.0.31
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/Psiphon-Labs/psiphon-tunnel-core/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=38ba0b8a8bd3fd1229fa7eb92b95fbaed7cea4eccfaac0915374f61010366edd
+PKG_HASH:=75e1680d486d3e797796b0a00ef48abda6b82f70dd14584f8b69452aed7fa64d
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
