@@ -124,6 +124,7 @@ jobs:
         run: |
           cd $OPENWRT_ROOT_PATH
           ./scripts/feeds update -a
+          tar xvfz $GITHUB_WORKSPACE/modemmanager.tar.gz
           ./scripts/feeds install -a
           echo "status=success" >> $GITHUB_OUTPUT
           
