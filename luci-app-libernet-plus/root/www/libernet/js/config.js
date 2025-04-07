@@ -114,6 +114,88 @@ const app = new Vue({
                                 }
                             }
                         },
+                        {
+                            value: 5,
+                            name: "V2Ray",
+                            protocols: [
+                                {
+                                    name: "VMess",
+                                    value: "vmess",
+                                    securities: [
+                                        "auto",
+                                        "aes-128-gcm",
+                                        "chacha20-poly1305",
+                                        "none"
+                                    ]
+                                },
+                                {
+                                    name: "VLESS",
+                                    value: "vless"
+                                },
+                                {
+                                    name: "Trojan",
+                                    value: "trojan"
+                                }
+                            ],
+                            networks: [
+                                {
+                                    name: "TCP",
+                                    value: "tcp"
+                                },
+                                {
+                                    name: "WebSocket",
+                                    value: "ws"
+                                },
+                                {
+                                    name: "HTTP",
+                                    value: "http"
+                                }
+                            ],
+                            securities: [
+                                {
+                                    name: "None",
+                                    value: "none"
+                                },
+                                {
+                                    name: "TLS",
+                                    value: "tls"
+                                }
+                            ],
+                            import_url: "",
+                            profile: {
+                                protocol: "",
+                                network: "",
+                                security: "",
+                                server: {
+                                    host: "",
+                                    port: null,
+                                    user: {
+                                        level: 0,
+                                        vmess: {
+                                            id: "",
+                                            security: ""
+                                        },
+                                        vless: {
+                                            id: ""
+                                        },
+                                        trojan: {
+                                            password: ""
+                                        }
+                                    }
+                                },
+                                stream: {
+                                    sni: "",
+                                    path: ""
+                                },
+                                etc: {
+                                    ip: "",
+                                    udpgw: {
+                                        ip: "127.0.0.1",
+                                        port: null
+                                    }
+                                }
+                            }
+                        },
                     ]
                 },
                 system: {}
@@ -140,7 +222,7 @@ const app = new Vue({
     },
     methods: {
         decodePath: _.debounce(function () {
-            this.config.temp.modes[1].profile.stream.path = decodeURIComponent(JSON.parse('"' + this.config.temp.modes[1].profile.stream.path + '"'))
+            this.config.temp.modes[5].profile.stream.path = decodeURIComponent(JSON.parse('"' + this.config.temp.modes[5].profile.stream.path + '"'))
         }, 500),
         getProfiles(mode) {
             let action
@@ -159,6 +241,9 @@ const app = new Vue({
                     break
                 case 4:
                     action = "get_sshslowdns_configs"
+                    break
+                case 5:
+                    action = "get_v2ray_configs"
                     break
             }
             axios.post('api.php', {
@@ -191,6 +276,9 @@ const app = new Vue({
                         break
                     case 4:
                         this.getSshSlowdnsConfig()
+                        break
+                    case 5:
+                        this.getV2rayConfig()
                         break
                 }
                 // resolve server host
@@ -291,6 +379,77 @@ const app = new Vue({
                 temp.modes[4].profile = res.data.data
             })
         },
+        getV2rayConfig() {
+            axios.post('api.php', {
+                action: "get_v2ray_config",
+                profile: this.config.profile
+            }).then((res) => {
+                const temp = this.config.temp
+                const profile = temp.modes[5].profile
+                const protocol = res.data.data.outbounds[0].protocol
+                const network = res.data.data.outbounds[0].streamSettings.network
+                const security = res.data.data.outbounds[0].streamSettings.security
+                let remote
+                let sni
+                let path = ""
+
+                // set mode & profile
+                temp.mode = 5
+                temp.profile = this.config.profile
+
+                profile.protocol = protocol
+                profile.network = network
+                profile.security = security
+                switch (protocol) {
+                    // vmess
+                    case "vmess":
+                        remote = res.data.data.outbounds[0].settings.vnext[0]
+                        profile.server.host = remote.address
+                        profile.server.port = remote.port
+                        profile.server.user.level = remote.users[0].level
+                        profile.server.user.vmess.id = remote.users[0].id
+                        profile.server.user.vmess.security = remote.users[0].security
+                        break
+                    // vless
+                    case "vless":
+                        remote = res.data.data.outbounds[0].settings.vnext[0]
+                        profile.server.host = remote.address
+                        profile.server.port = remote.port
+                        profile.server.user.level = remote.users[0].level
+                        profile.server.user.vless.id = remote.users[0].id
+                        break
+                    // trojan
+                    case "trojan":
+                        remote = res.data.data.outbounds[0].settings.servers[0]
+                        profile.server.host = remote.address
+                        profile.server.port = remote.port
+                        profile.level = remote.level
+                        profile.server.user.trojan.password = remote.password
+                        break
+                }
+                switch (network) {
+                    // tcp
+                    case "tcp":
+                        sni = res.data.data.outbounds[0].streamSettings.tlsSettings.serverName
+                        break
+                    // ws
+                    case "ws":
+                        sni = res.data.data.outbounds[0].streamSettings.wsSettings.headers.Host
+                        path = res.data.data.outbounds[0].streamSettings.wsSettings.path
+                        break
+                    // http
+                    case "http":
+                        sni = res.data.data.outbounds[0].streamSettings.httpSettings.host[0]
+                        path = res.data.data.outbounds[0].streamSettings.httpSettings.path
+                        break
+                }
+                profile.stream.sni = sni
+                profile.stream.path = path
+                profile.etc.ip = res.data.data.etc.ip
+                profile.etc.udpgw.ip = res.data.data.etc.udpgw.ip
+                profile.etc.udpgw.port = res.data.data.etc.udpgw.port
+            })
+        },
         getSystemConfig() {
             return new Promise((resolve) => {
                 axios.post('api.php', {
@@ -325,6 +484,10 @@ const app = new Vue({
                     config = this.config.temp.modes[4].profile
                     title = "SSH-SlowDNS config has been saved"
                     break
+                case 5:
+                    config = this.config.temp.modes[5].profile
+                    title = "V2Ray config has been saved"
+                    break
             }
             axios.post('api.php', {
                 action: "save_config",
@@ -346,6 +509,35 @@ const app = new Vue({
                 this.config.profile = ""
                 this.getProfiles(this.config.mode)
             })
+        },
+        importV2rayConfig() {
+            const protocol = this.config.temp.modes[5].profile.protocol
+            const importUrl = this.config.temp.modes[5].import_url
+            const config = JSON.parse(atob(importUrl.split("://")[1]))
+            const profile = this.config.temp.modes[5].profile
+            switch (protocol) {
+                case "vmess":
+                    const host = config.add
+                    const port = config.port
+                    const network = config.net
+                    const security = config.tls
+                    const alterId = config.aid
+                    const vmess_id = config.id
+                    const vmess_security = config.type
+                    const sni = config.host
+                    const path = config.path
+                    profile.server.host = host
+                    profile.server.port = parseInt(port)
+                    profile.network = network
+                    profile.security = security
+                    profile.server.user.level = parseInt(alterId)
+                    profile.server.user.vmess.id = vmess_id
+                    profile.server.user.vmess.security = vmess_security
+                    profile.stream.sni = sni
+                    profile.stream.path = path
+                    break
+            }
+            this.resolveServerHost()
         },
         importOvpnConfig(event) {
             const file = event.target.files[0]
@@ -398,6 +590,15 @@ const app = new Vue({
                         host: this.config.temp.modes[4].profile.host
                     }).then((res) => {
                         this.config.temp.modes[4].profile.ip = res.data.data[0]
+                    })
+                    break
+                // v2ray
+                case 5:
+                    axios.post('api.php', {
+                        action: 'resolve_host',
+                        host: this.config.temp.modes[5].profile.server.host
+                    }).then((res) => {
+                        this.config.temp.modes[5].profile.etc.ip = res.data.data[0]
                     })
                     break
             }

@@ -28,6 +28,9 @@
                                 <li>SSH-SSL</li>
                                 <li>SSH-Websocket-CDN</li>
                                 <li>SSH-SlowDNS</li>
+                                <li>V2Ray VMess</li>
+                                <li>V2Ray VLESS</li>
+                                <li>V2Ray Trojan</li>
                                 <li>OpenVPN</li>
                             </ul>
                         </div>

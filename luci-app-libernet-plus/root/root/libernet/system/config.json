@@ -1,8 +1,8 @@
 {
     "tunnel": {
-        "autostart": false,
+        "autostart": true,
         "dns_resolver": true,
-        "ping_loop": false,
+        "ping_loop": true,
         "auto_recon": true,
         "mode": 0,
         "profile": {
@@ -10,7 +10,8 @@
             "ssh_ssl": "",
             "openvpn": "",
             "ssh_ws_cdn": "",
-            "ssh_slowdns": ""
+            "ssh_slowdns": "",
+            "v2ray": ""
         }
     },
     "server": "",

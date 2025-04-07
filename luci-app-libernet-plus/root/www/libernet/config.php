@@ -66,6 +66,12 @@
                                         </label>
                                     </div>
                                 </div>
+                                <div v-if="config.temp.mode === 5" class="col-md-6">
+                                    <label>Protocol</label>
+                                    <select class="form-control" v-model="config.temp.modes[5].profile.protocol" required>
+                                        <option v-for="protocol in config.temp.modes[5].protocols" :value="protocol.value">{{ protocol.name }}</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div v-if="config.temp.mode === 0" class="ssh pb-lg-2">
@@ -282,6 +288,88 @@
                                     <div class="col-md-4">
                                         <label>Pubkey</label>
                                         <input type="text" class="form-control" placeholder="pubkey" v-model="config.temp.modes[4].profile.pubkey" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-if="config.temp.mode === 5" class="v2ray">
+                                <div v-if="config.temp.modes[5].profile.protocol === 'vmess'" class="form-row pt-lg-2 pb-lg-2 v2ray-vmess">
+                                    <div class="col">
+                                        <label>Import VMess from URL</label>
+                                        <div class="d-flex">
+                                            <input type="text" class="form-control mr-1" placeholder="vmess://xxxxxxxxxxxx" v-model="config.temp.modes[5].import_url">
+                                            <button type="button" class="btn btn-primary ml-1" @click="importV2rayConfig">Import</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row pb-lg-2">
+                                    <div class="col-md-5">
+                                        <label>Server Host</label>
+                                        <input type="text" class="form-control" placeholder="Host/ip" v-model="config.temp.modes[5].profile.server.host" @input="resolveServerHost" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Server IP</label>
+                                        <input type="text" class="form-control" placeholder="192.168.1.1" v-model="config.temp.modes[5].profile.etc.ip" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Server Port</label>
+                                        <input type="number" class="form-control" placeholder="443" v-model.number="config.temp.modes[5].profile.server.port" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>UDPGW Port</label>
+                                        <input type="number" class="form-control" placeholder="7300" v-model.number="config.temp.modes[5].profile.etc.udpgw.port" required>
+                                    </div>
+                                </div>
+                                <div v-if="config.temp.modes[5].profile.protocol === 'trojan'" class="form-row pb-lg-2 v2ray-trojan">
+                                    <div class="col-md-6">
+                                        <label>Trojan Password</label>
+                                        <input type="text" class="form-control" placeholder="Password" v-model="config.temp.modes[5].profile.server.user.trojan.password" required>
+                                    </div>
+                                </div>
+                                <div v-if="config.temp.modes[5].profile.protocol === 'vmess'" class="form-row pb-lg-2 v2ray-vmess">
+                                    <div class="col-md-8">
+                                        <label>VMess ID</label>
+                                        <input type="text" class="form-control" placeholder="900c42c7-a23d-46dd-a1a0-72c37edf8a03" v-model="config.temp.modes[5].profile.server.user.vmess.id" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>VMess Security</label>
+                                        <select class="custom-select" v-model="config.temp.modes[5].profile.server.user.vmess.security" required>
+                                            <option v-for="security in config.temp.modes[5].protocols[0].securities" :value="security">{{ security }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div v-if="config.temp.modes[5].profile.protocol === 'vless'" class="form-row pb-lg-2 v2ray-vless">
+                                    <div class="col-md-8">
+                                        <label>VLESS ID</label>
+                                        <input type="text" class="form-control" placeholder="900c42c7-a23d-46dd-a1a0-72c37edf8a03" v-model="config.temp.modes[5].profile.server.user.vless.id" required>
+                                    </div>
+                                </div>
+                                <div class="form-row pb-lg-2">
+                                    <div class="col-md-2">
+                                        <label>Network</label>
+                                        <select class="custom-select" v-model="config.temp.modes[5].profile.network" required>
+                                            <option v-for="network in config.temp.modes[5].networks" :value="network.value">{{ network.name }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Security</label>
+                                        <select v-if="config.temp.modes[5].profile.network === 'tcp'" class="custom-select" v-model="config.temp.modes[5].profile.security" required>
+                                            <option :value="config.temp.modes[5].securities[1].value">{{ config.temp.modes[5].securities[1].name }}</option>
+                                        </select>
+                                        <select v-else-if="config.temp.modes[5].profile.network === 'http'" class="custom-select" v-model="config.temp.modes[5].profile.security" required>
+                                            <option :value="config.temp.modes[5].securities[0].value">{{ config.temp.modes[5].securities[0].name }}</option>
+                                        </select>
+                                        <select v-else class="custom-select" v-model="config.temp.modes[5].profile.security" required>
+                                            <option v-for="security in config.temp.modes[5].securities" :value="security.value">{{ security.name }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>SNI</label>
+                                        <input type="text" class="form-control" placeholder="www.bug.com" v-model="config.temp.modes[5].profile.stream.sni" required>
+                                    </div>
+                                    <div v-if="config.temp.modes[5].profile.network !== 'tcp'" class="col-md-4">
+                                        <label>Path</label>
+                                        <input type="text" class="form-control" placeholder="/" v-model="config.temp.modes[5].profile.stream.path" @input="decodePath" required>
                                     </div>
                                 </div>
                             </div>

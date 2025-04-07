@@ -10,7 +10,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 function connect() {
-  sshpass -p "${2}" ssh \
+  sshpass -p "${2}" ssh -C \
     -4CND "${5}" \
     -p "${4}" \
     -o TCPKeepAlive=yes \
@@ -22,7 +22,7 @@ function connect() {
 }
 
 function connect_with_proxy() {
-  sshpass -p "${2}" ssh \
+  sshpass -p "${2}" ssh -C \
     -4CND "${5}" \
     -p "${4}" \
     -o TCPKeepAlive=yes \
@@ -35,7 +35,7 @@ function connect_with_proxy() {
 }
 
 function connect_slowdns() {
-  sshpass -p "${2}" ssh \
+  sshpass -p "${2}" ssh -C \
     -N -D "${4}" \
     -o TCPKeepAlive=yes \
     -o ServerAliveInterval=180 \

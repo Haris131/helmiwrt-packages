@@ -10,7 +10,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 function connect() {
-  sshpass -p "${2}" ssh \
+  sshpass -p "${2}" ssh -C \
     -4CND "${3}" \
     -p 10443 \
     -o TCPKeepAlive=yes \

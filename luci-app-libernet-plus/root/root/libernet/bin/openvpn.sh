@@ -36,7 +36,7 @@ function configure() {
   # change tun dev
   sed -i "s/dev .*/dev ${TUN_DEV}/g" "${OPENVPN_CFG}"
   # change host port
-  sed -i "s/remote .*/remote ${OPENVPN_HOST} ${OPENVPN_PORT}/g" "${OPENVPN_CFG}"
+#  sed -i "s/remote .*/remote ${OPENVPN_HOST} ${OPENVPN_PORT}/g" "${OPENVPN_CFG}"
   # auth
   echo -e "${OPENVPN_USER}\n${OPENVPN_PASS}" > "${OPENVPN_CRED}"
   sed -i "s/auth-user-pass.*/auth-user-pass \"$(echo ${OPENVPN_CRED} | sed 's/\//\\\//g')\"/g" "${OPENVPN_CFG}"

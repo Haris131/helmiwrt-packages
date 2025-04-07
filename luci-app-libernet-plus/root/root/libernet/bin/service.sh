@@ -161,6 +161,12 @@ function ssh_slowdns_service() {
   run_other_services
 }
 
+function v2ray_service() {
+  "${LIBERNET_DIR}/bin/v2ray.sh" -r
+  check_connection
+  run_other_services
+}
+
 function start_services() {
   # clear service log
   "${LIBERNET_DIR}/bin/log.sh" -r
@@ -185,6 +191,9 @@ function start_services() {
       ;;
     "4")
       ssh_slowdns_service
+      ;;
+    "5")
+      v2ray_service
       ;;
   esac
   # write service status: connected
@@ -214,6 +223,9 @@ function stop_services() {
       ;;
     "4")
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -s
+      ;; 
+    "5")
+      "${LIBERNET_DIR}/bin/v2ray.sh" -s
       ;;
   esac
   if [[ "${1}" != '-c' ]]; then
@@ -297,6 +309,9 @@ case "${1}" in
     ;;
   -slo)
     ssh_slowdns_service
+    ;;
+  -sv)
+    v2ray_service
     ;;
   -sl)
     start_services

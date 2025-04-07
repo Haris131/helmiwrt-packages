@@ -91,14 +91,14 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- <div class="col-lg-6 col-md-6 pb-lg-1">
+                                <div class="col-lg-6 col-md-6 pb-lg-1">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" v-model="config.system.tunnel.ping_loop" :disabled="status === true" id="ping-loop">
                                         <label class="form-check-label" for="ping-loop">
                                             Ping Loop
                                         </label>
                                     </div>
-                                </div> -->
+                                </div>
                                 <div class="col-lg-6 col-md-6">
 									<i class="fa fa-inbox"></i>
                                     <span class="text-primary">Status: </span><span :class="{ 'text-primary': connection === 0, 'text-warning': connection === 1, 'text-success': connection === 2, 'text-info': connection === 3 }">{{ connectionText }}</span>
@@ -125,7 +125,7 @@
                                     <span class="text-primary">ISP: {{ wan_isp }}</span>
                                 </div>
                                 <div class="col pt-2">
-                                    <pre ref="log" v-html="log" class="form-control text-left" style="height: auto; width: auto; font-size:80%; background-image-position: center; background-color: #141d26 "></pre>
+                                    <pre ref="log" v-html="log" class="form-control text-left" style="height: 15rem; width: auto; font-size:80%; background-image-position: center; background-color: #141d26 "></pre>
                                 </div>
                             </div>
                         </div>

@@ -15,7 +15,7 @@
 	    $bytes = max($bytes, 0);
 	    $pow = min(floor(($bytes ? log($bytes) : 0) / log(1024)), count($units) - 1);
 	    $bytes /= pow(1024, $pow);
-    return round($bytes, $precision).$units[$pow];
+      return round($bytes, $precision).$units[$pow];
     }
 
     function get_profiles($mode) {
@@ -46,6 +46,28 @@
         }
         $data = json_decode($config);
         json_response($data);
+    }
+
+    function set_v2ray_config($config, $protocol, $network, $security, $sni, $path, $ip, $udpgw_ip, $udpgw_port) {
+        $config->outbounds[0]->protocol = $protocol;
+        $config->outbounds[0]->streamSettings->network = $network;
+        $config->outbounds[0]->streamSettings->security = $security;
+        // forcing security to none if network http
+        if ($network === 'http') {
+            $config->outbounds[0]->streamSettings->security = 'none';
+        }
+        // tls
+        $config->outbounds[0]->streamSettings->tlsSettings->serverName = $sni;
+        // ws
+        $config->outbounds[0]->streamSettings->wsSettings->path = $path;
+        $config->outbounds[0]->streamSettings->wsSettings->headers->Host = $sni;
+        // http
+        $config->outbounds[0]->streamSettings->httpSettings->host[0] = $sni;
+        $config->outbounds[0]->streamSettings->httpSettings->path = $path;
+        // misc
+        $config->etc->ip = $ip;
+        $config->etc->udpgw->ip = $udpgw_ip;
+        $config->etc->udpgw->port = $udpgw_port;
     }
 
     function set_auto_start($status) {
@@ -93,6 +115,10 @@
                 $profile = $json['profile'];
                 get_config('ssh_slowdns', $profile);
                 break;
+            case 'get_v2ray_config':
+                $profile = $json['profile'];
+                get_config('v2ray', $profile);
+                break;
             case 'get_ssh_configs':
                 get_profiles('ssh');
                 break;
@@ -108,6 +134,9 @@
 			case 'get_sshslowdns_configs':
                 get_profiles('ssh_slowdns');
 				break;
+            case 'get_v2ray_configs':
+                get_profiles('v2ray');
+                break;
 			case 'restart_libernet':
                 $system_config = file_get_contents($libernet_dir.'/system/config.json');
                 $system_config = json_decode($system_config);
@@ -181,6 +210,68 @@
                             file_put_contents($libernet_dir.'/bin/config/ssh_slowdns/'.$profile.'.json', json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
                             json_response('SSH-SlowDNS config saved');
                             break;
+                        // v2ray
+                        case 5:
+                            $protocol = $config['protocol'];
+                            $network = $config['network'];
+                            $security = $config['security'];
+                            // remote server
+                            $host = $config['server']['host'];
+                            $port = $config['server']['port'];
+                            // user settings
+                            $user_level = $config['server']['user']['level'];
+                            $vmess_id = $config['server']['user']['vmess']['id'];
+                            $vless_id = $config['server']['user']['vless']['id'];
+                            $vmess_security = $config['server']['user']['vmess']['security'];
+                            $trojan_password = $config['server']['user']['trojan']['password'];
+                            // stream settings
+                            $sni = $config['stream']['sni'];
+                            $path = $config['stream']['path'];
+                            // misc
+                            $ip = $config['etc']['ip'];
+                            $udpgw_ip = $config['etc']['udpgw']['ip'];
+                            $udpgw_port = $config['etc']['udpgw']['port'];
+                            switch ($protocol) {
+                                // vmess
+                                case "vmess":
+                                    $vmess_config = file_get_contents($libernet_dir.'/bin/config/v2ray/templates/vmess.json');
+                                    $vmess_config = json_decode($vmess_config);
+                                    $vmess_config->outbounds[0]->settings->vnext[0]->address = $host;
+                                    $vmess_config->outbounds[0]->settings->vnext[0]->port = $port;
+                                    $vmess_config->outbounds[0]->settings->vnext[0]->users[0]->level = $user_level;
+                                    $vmess_config->outbounds[0]->settings->vnext[0]->users[0]->alterId = $user_level;
+                                    $vmess_config->outbounds[0]->settings->vnext[0]->users[0]->id = $vmess_id;
+                                    $vmess_config->outbounds[0]->settings->vnext[0]->users[0]->security = $vmess_security;
+                                    set_v2ray_config($vmess_config, $protocol, $network, $security, $sni, $path, $ip, $udpgw_ip, $udpgw_port);
+                                    file_put_contents($libernet_dir.'/bin/config/v2ray/'.$profile.'.json', json_encode($vmess_config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                                    json_response('V2Ray vmess config saved');
+                                    break;
+                                // vless
+                                case "vless":
+                                    $vless_config = file_get_contents($libernet_dir.'/bin/config/v2ray/templates/vless.json');
+                                    $vless_config = json_decode($vless_config);
+                                    $vless_config->outbounds[0]->settings->vnext[0]->address = $host;
+                                    $vless_config->outbounds[0]->settings->vnext[0]->port = $port;
+                                    $vless_config->outbounds[0]->settings->vnext[0]->users[0]->level = $user_level;
+                                    $vless_config->outbounds[0]->settings->vnext[0]->users[0]->id = $vless_id;
+                                    set_v2ray_config($vless_config, $protocol, $network, $security, $sni, $path, $ip, $udpgw_ip, $udpgw_port);
+                                    file_put_contents($libernet_dir.'/bin/config/v2ray/'.$profile.'.json', json_encode($vless_config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                                    json_response('V2Ray vless config saved');
+                                    break;
+                                // trojan
+                                case "trojan":
+                                    $trojan_config = file_get_contents($libernet_dir.'/bin/config/v2ray/templates/trojan.json');
+                                    $trojan_config = json_decode($trojan_config);
+                                    $trojan_config->outbounds[0]->settings->servers[0]->address = $host;
+                                    $trojan_config->outbounds[0]->settings->servers[0]->port = $port;
+                                    $trojan_config->outbounds[0]->settings->servers[0]->level = $user_level;
+                                    $trojan_config->outbounds[0]->settings->servers[0]->password = $trojan_password;
+                                    set_v2ray_config($trojan_config, $protocol, $network, $security, $sni, $path, $ip, $udpgw_ip, $udpgw_port);
+                                    file_put_contents($libernet_dir.'/bin/config/v2ray/'.$profile.'.json', json_encode($trojan_config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                                    json_response('V2Ray trojan config saved');
+                                    break;
+                            }
+                            break;
                     }
                 }
                 break;
@@ -246,6 +337,15 @@
                             $system_config->tun2socks->udpgw->ip = $ssh_slowdns_config->udpgw->ip;
                             $system_config->tun2socks->udpgw->port = $ssh_slowdns_config->udpgw->port;
                             break;
+                        // v2ray
+                        case 5:
+                            $v2ray_config = file_get_contents($libernet_dir.'/bin/config/v2ray/'.$profile.'.json');
+                            $v2ray_config = json_decode($v2ray_config);
+                            $system_config->tunnel->profile->v2ray = $profile;
+                            $system_config->server = $v2ray_config->etc->ip;
+                            $system_config->tun2socks->udpgw->ip = $v2ray_config->etc->udpgw->ip;
+                            $system_config->tun2socks->udpgw->port = $v2ray_config->etc->udpgw->port;
+                            break;
                     }
                     $system_config->tunnel->mode = $mode;
                     $system_config->tun2socks->legacy = $tun2socks_legacy;
@@ -288,6 +388,10 @@
                         case 4:
                             unlink($libernet_dir.'/bin/config/ssh_slowdns/'.$profile.'.json');
                             json_response('SSH-SlowDNS config removed');
+                            break;
+                        case 5:
+                            unlink($libernet_dir.'/bin/config/v2ray/'.$profile.'.json');
+                            json_response('V2Ray config removed');
                             break;
                     }
                 }

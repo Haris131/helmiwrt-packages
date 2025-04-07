@@ -15,7 +15,7 @@ TUNNEL_MODE="$(grep 'mode":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; 
 TUN_DEV="$(grep 'dev":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
 DYNAMIC_PORT="$(grep 'port":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g' | sed -n '1p')"
 
-if ifconfig $TUN_DEV | grep 'bytes:'; then
+if ifconfig $TUN_DEV | grep 'bytes:' > /dev/null 2>&1; then
   echo -n ""
 else
   TUN_DEV=$(ip r | grep default | cut -d" " -f5)
@@ -25,7 +25,7 @@ function loop() {
 n=0
 while [ 1 ]; do
   r=$(curl -m4 88.198.46.60 -w "%{http_code}" -s -o /dev/null | head -c2)
-  ip=$(timeout 5 httping -c3 -g http://google.com -5 2>/dev/null|awk "NR==2"|awk -F 'time=' '{print $2}'|awk -F. '{print $1}')
+  ip=$(timeout 5 httping -c3 -g http://bing.com -5 2>/dev/null|awk "NR==2"|awk -F 'time=' '{print $2}'|awk -F. '{print $1}')
   echo $r $ip
   if [ $r -eq 30 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: Green\">Checking Connection... </span>"
@@ -65,6 +65,35 @@ while [ 1 ]; do
       killall auto_recon.sh
       exit 1
     fi
+    if [ $(grep -c "channel" ${LIBERNET_DIR}/log/screenlog.0) -gt 0 ]; then
+      case "${TUNNEL_MODE}" in
+        "0")
+          "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH"
+          "${LIBERNET_DIR}/bin/ssh.sh" -s
+          sleep 1
+          "${LIBERNET_DIR}/bin/ssh.sh" -r
+          ;;
+        "1")
+          "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart SSH-SSL"
+          "${LIBERNET_DIR}/bin/ssh-ssl.sh" -s
+          sleep 1
+          "${LIBERNET_DIR}/bin/ssh-ssl.sh" -r
+          ;;
+        "3")
+          "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-ws-cdn"
+          "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -s
+          sleep 1
+          "${LIBERNET_DIR}/bin/ssh-ws-cdn.sh" -r
+          ;;
+        "4")
+          "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-slowdns"
+          "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -s
+          sleep 1
+          "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -r
+          ;;
+      esac
+      sleep 5
+    fi
   fi
   if [ $n -gt 4 ]; then
     "${LIBERNET_DIR}/bin/log.sh" -w "<span style=\"color: green\">Auto Reconnecting</span>"
@@ -103,6 +132,10 @@ function start_services() {
     "4")
       "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart ssh-slowdns"
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -r
+      ;;
+    "5")
+      "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart v2ray"
+      "${LIBERNET_DIR}/bin/v2ray.sh" -r
       ;;
   esac
   "${LIBERNET_DIR}/bin/log.sh" -w "Auto Reconnect Restart Tun2Socks"
@@ -150,6 +183,9 @@ function stop_services() {
       ;;
      "4")
       "${LIBERNET_DIR}/bin/ssh-slowdns.sh" -s
+      ;;
+     "5")
+      "${LIBERNET_DIR}/bin/v2ray.sh" -s
       ;;
   esac
   "${LIBERNET_DIR}/bin/log.sh" -w "Auto Stopping Tun2Socks"

@@ -48,6 +48,10 @@ const app = new Vue({
                             value: 4,
                             name: "SSH-SlowDNS",
                         },
+                        {
+                            value: 5,
+                            name: "V2Ray"
+                        },
                     ]
                 },
                 system: {
@@ -55,7 +59,7 @@ const app = new Vue({
                         autostart: false,
                         dns_resolver: false,
                         ping_loop: false,
-			auto_recon: false
+                        auto_recon: false
                     },
                     tun2socks: {
                         legacy: false
@@ -147,6 +151,9 @@ const app = new Vue({
                     break
                 case 4:
                     action = "get_sshslowdns_configs"
+                    break
+                case 5:
+                    action = "get_v2ray_configs"
                     break
             }
             axios.post('api.php', {
@@ -268,6 +275,9 @@ const app = new Vue({
                     break
                 case 4:
                     this.config.profile = res.tunnel.profile.ssh_slowdns
+                    break
+                case 5:
+                    this.config.profile = res.tunnel.profile.v2ray
                     break
             }
         })
