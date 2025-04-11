@@ -12,7 +12,7 @@ pushd package/community
 
 # HelmiWrt packages
 git clone --depth=1 https://github.com/Haris131/helmiwrt-packages
-rm -rf v2ray-core
+rm -rf helmiwrt-packages/v2ray-core
 
 git clone --depth=1 https://github.com/nosignals/openwrt-neko
 sed -i "s|php7|php8|g" openwrt-neko/luci-app-neko/root/etc/neko/core/neko
