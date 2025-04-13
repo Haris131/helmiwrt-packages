@@ -34,8 +34,6 @@ function reset_all_log() {
   reset_log \
     && rm "${STATUS_FILE}" \
     && touch "${STATUS_FILE}" \
-    && rm "${UPDATE_FILE}" \
-    && touch "${UPDATE_FILE}" \
     && rm "${CONNECTED_FILE}" \
     && touch "${CONNECTED_FILE}"
 }
@@ -46,9 +44,6 @@ case "${1}" in
     ;;
   -s)
     write_status "${2}"
-    ;;
-  -u)
-    write_update "${2}"
     ;;
   -c)
     write_connected "${2}"
