@@ -93,7 +93,7 @@ jobs:
           elif [ ${REPO_BRANCH} = "23.05.5" ]; then
             export REPO_SDK=$(echo "https://downloads.${SOURCE_WRT}.org/${BRANCH_REL}/targets/${PLATFORM}/${SOURCE_WRT}-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-12.3.0_musl.Linux-x86_64.tar.xz")
           elif [ ${REPO_BRANCH} = "24.10.1" ]; then
-            export REPO_SDK=$(echo "https://downloads.${SOURCE_WRT}.org/releases/${BRANCH_REL}/targets/${PLATFORM}/${SOURCE_WRT}-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-13.3.0_musl.Linux-x86_64.tar.zst")
+            export REPO_SDK=$(echo "https://downloads.${SOURCE_WRT}.org/${BRANCH_REL}/targets/${PLATFORM}/${SOURCE_WRT}-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-13.3.0_musl.Linux-x86_64.tar.zst")
           fi
           echo "REPO_SDK=${REPO_SDK}" >> $GITHUB_ENV
           echo "sdk url:: ${REPO_SDK}"
