@@ -26,7 +26,8 @@ on:
         default: 21.02.7
         options:
         - 21.02.7
-        - 23.05.4
+        - 23.05.5
+        - 24.10.1
       platform:
         type: choice
         description: Select device platform.
@@ -89,14 +90,24 @@ jobs:
           df -hT $PWD
           if [ ${REPO_BRANCH} = "21.02.7" ]; then
             export REPO_SDK=$(echo "https://downloads.${SOURCE_WRT}.org/${BRANCH_REL}/targets/${PLATFORM}/${SOURCE_WRT}-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-8.4.0_musl.Linux-x86_64.tar.xz")
-          else
+          elif [ ${REPO_BRANCH} = "23.05.5" ]; then
             export REPO_SDK=$(echo "https://downloads.${SOURCE_WRT}.org/${BRANCH_REL}/targets/${PLATFORM}/${SOURCE_WRT}-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-12.3.0_musl.Linux-x86_64.tar.xz")
+          elif [ ${REPO_BRANCH} = "24.10.1" ]; then
+            export REPO_SDK=$(echo "https://downloads.${SOURCE_WRT}.org/releases/${BRANCH_REL}/targets/${PLATFORM}/${SOURCE_WRT}-sdk-${REPO_BRANCH}-${PLATFORM_SUB}_gcc-13.3.0_musl.Linux-x86_64.tar.zst")
           fi
           echo "REPO_SDK=${REPO_SDK}" >> $GITHUB_ENV
           echo "sdk url:: ${REPO_SDK}"
           wget ${REPO_SDK}
-          tar xf *.tar.xz
-          rm -f *.tar.xz
+          if [ ${REPO_BRANCH} = "21.02.7" ]; then 
+            tar xf *.tar.xz
+            rm -f *.tar.xz
+          elif [ ${REPO_BRANCH} = "23.05.5" ]; then
+            tar xf *.tar.xz
+            rm -f *.tar.xz
+          elif [ ${REPO_BRANCH} = "24.10.1" ]; then
+            tar --zstd -xvf *.tar.zst
+            rm -f *.tar.zst
+          fi
           mv ${SOURCE_WRT}-* /workdir/openwrt
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
           export OPENWRT_ROOT_PATH="$GITHUB_WORKSPACE/openwrt"
