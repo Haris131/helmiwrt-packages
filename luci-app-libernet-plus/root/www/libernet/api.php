@@ -164,8 +164,19 @@
                 $system_config = file_get_contents($libernet_dir.'/system/config.json');
                 $tundev = json_decode($system_config)->tun2socks->dev;
                 // use hard coded tun device
-                exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $2}' | awk -F ' ' '{print $1}'", $rx);
-            	exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $3}' | awk -F ' ' '{print $1}'", $tx);
+                exec("ip r | grep default | grep -v $tundev | cut -d' ' -f5",$tun);
+                if ($tun){
+                    exec("ip r | grep default | cut -d' ' -f5", $interf);
+                   	exec("cat /sys/class/net/$interf[0]/statistics/rx_bytes", $rxp);
+                    exec("cat /sys/class/net/$interf[0]/statistics/tx_bytes", $txp);
+                    exec("cat /tmp/libernet_rx_tx | awk 'NR==1'", $rxo);
+                    exec("cat /tmp/libernet_rx_tx | awk 'NR==2'", $txo);
+                    exec("expr $rxp[0] - $rxo[0]", $rx);
+                    exec("expr $txp[0] - $txo[0]", $tx);
+                } else {
+                    exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $2}' | awk -F ' ' '{print $1}'", $rx);
+            	    exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $3}' | awk -F ' ' '{print $1}'", $tx);
+            	}
                 json_response(array(
                     'status' => intval($status),
                     'log' => $log,
@@ -294,7 +305,7 @@
                             $ssh_config = json_decode($ssh_config);
                             $system_config->tunnel->profile->ssh = $profile;
                             $system_config->server = $ssh_config->ip;
-                            $system_config->cdn_server =  $ssh_config->http->proxy->ip;
+                            $system_config->cdn_server = $ssh_config->http->proxy->ip;
                             $system_config->tun2socks->udpgw->ip = $ssh_config->udpgw->ip;
                             $system_config->tun2socks->udpgw->port = $ssh_config->udpgw->port;
                             break;
