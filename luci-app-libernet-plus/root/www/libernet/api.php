@@ -164,10 +164,10 @@
                 $system_config = file_get_contents($libernet_dir.'/system/config.json');
                 $tundev = json_decode($system_config)->tun2socks->dev;
                 // use hard coded tun device
-                exec("ip r | grep default | grep -v $tundev | cut -d' ' -f5",$tun);
+                exec("ip r | grep default | grep -v $tundev | cut -d' ' -f5", $tun);
                 if ($tun){
                     exec("ip r | grep default | cut -d' ' -f5", $interf);
-                   	exec("cat /sys/class/net/$interf[0]/statistics/rx_bytes", $rxp);
+                    exec("cat /sys/class/net/$interf[0]/statistics/rx_bytes", $rxp);
                     exec("cat /sys/class/net/$interf[0]/statistics/tx_bytes", $txp);
                     exec("cat /tmp/libernet_rx_tx | awk 'NR==1'", $rxo);
                     exec("cat /tmp/libernet_rx_tx | awk 'NR==2'", $txo);
