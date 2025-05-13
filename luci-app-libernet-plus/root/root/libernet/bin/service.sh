@@ -11,6 +11,7 @@ fi
 
 SYSTEM_CONFIG="${LIBERNET_DIR}/system/config.json"
 TUNNEL_MODE="$(grep 'mode":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
+TUN2SOCKS_MODE="$(grep 'legacy":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
 CONNECTED=false
 DYNAMIC_PORT="$(grep 'port":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g' | head -1)"
 DNS_RESOLVER="$(grep 'dns_resolver":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
@@ -19,6 +20,9 @@ PING_LOOP="$(grep 'ping_loop":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//
 AUTO_RECON="$(grep 'auto_recon":' ${SYSTEM_CONFIG} | awk '{print $2}' | sed 's/,//g; s/"//g')"
 
 function check_connection() {
+  interf=$(ip r | grep default | grep -v "${TUN2SOCKS_MODE}" | cut -d' ' -f5)
+  rx_bytes=$(cat /sys/class/net/$interf/statistics/rx_bytes > /tmp/libernet_rx_tx)
+  tx_bytes=$(cat /sys/class/net/$interf/statistics/tx_bytes >> /tmp/libernet_rx_tx)
   counter=0
   max_retries=3
   while [[ "${counter}" -lt "${max_retries}" ]]; do
@@ -61,9 +65,6 @@ function run_other_services() {
     memory_cleaner_service
     ping_loop_service
     auto_recon_service
-    interf=$(ip r | grep default | cut -d' ' -f5)
-    rx_bytes=$(cat /sys/class/net/$interf/statistics/rx_bytes > /tmp/libernet_rx_tx)
-    tx_bytes=$(cat /sys/class/net/$interf/statistics/tx_bytes >> /tmp/libernet_rx_tx)
   fi
 }
 
