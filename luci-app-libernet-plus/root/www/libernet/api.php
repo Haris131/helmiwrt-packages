@@ -168,10 +168,15 @@
                 if ($interf[0]) {
                    	exec("cat /sys/class/net/$interf[0]/statistics/rx_bytes", $rxp);
                     exec("cat /sys/class/net/$interf[0]/statistics/tx_bytes", $txp);
-                    exec("cat /tmp/libernet_rx_tx | awk 'NR==1'", $rxo);
-                    exec("cat /tmp/libernet_rx_tx | awk 'NR==2'", $txo);
-                    exec("expr $rxp[0] - $rxo[0]", $rx);
-                    exec("expr $txp[0] - $txo[0]", $tx);
+                    if (file_exists("/tmp/libernet_tx_tx")) {
+                        exec("cat /tmp/libernet_rx_tx | awk 'NR==1'", $rxo);
+                        exec("cat /tmp/libernet_rx_tx | awk 'NR==2'", $txo);
+                        exec("expr $rxp[0] - $rxo[0]", $rx);
+                        exec("expr $txp[0] - $txo[0]", $tx);
+                    } else {
+                        $rx = [0];
+                        $tx = [0];
+                    }
                 } else {
                     exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $2}' | awk -F ' ' '{print $1}'", $rx);
             	    exec("ifconfig $tundev | grep 'bytes:' | awk -F ':' '{print $3}' | awk -F ' ' '{print $1}'", $tx);
