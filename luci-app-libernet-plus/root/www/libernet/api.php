@@ -168,7 +168,7 @@
                 if ($interf[0] != $tundev) {
                    	exec("cat /sys/class/net/$interf[0]/statistics/rx_bytes", $rxp);
                     exec("cat /sys/class/net/$interf[0]/statistics/tx_bytes", $txp);
-                    if (file_exists("/tmp/libernet_tx_tx")) {
+                    if (file_exists("/tmp/libernet_rx_tx")) {
                         exec("cat /tmp/libernet_rx_tx | awk 'NR==1'", $rxo);
                         exec("cat /tmp/libernet_rx_tx | awk 'NR==2'", $txo);
                         exec("expr $rxp[0] - $rxo[0]", $rx);
