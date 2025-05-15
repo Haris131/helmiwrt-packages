@@ -164,8 +164,8 @@
                 $system_config = file_get_contents($libernet_dir.'/system/config.json');
                 $tundev = json_decode($system_config)->tun2socks->dev;
                 // use hard coded tun device
-                exec("ip r | grep default | grep -v $tundev | cut -d' ' -f5", $interf);
-                if ($interf[0]) {
+                exec("ip r | grep default | cut -d' ' -f5", $interf);
+                if ($interf[0] != $tundev) {
                    	exec("cat /sys/class/net/$interf[0]/statistics/rx_bytes", $rxp);
                     exec("cat /sys/class/net/$interf[0]/statistics/tx_bytes", $txp);
                     if (file_exists("/tmp/libernet_tx_tx")) {
